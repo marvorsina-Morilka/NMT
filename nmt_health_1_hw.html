@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NMT-Health 1-h/w</title>
+  <style>
+    :root {
+      --primary: #00897b;
+      --primary-dark: #00695c;
+      --success: #2e7d32;
+      --error: #c62828;
+      --bg: #e0f2f1;
+      --card: #ffffff;
+      --border: #80cbc4;
+      --text: #1a1a2e;
+      --muted: #546e7a;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; padding: 20px; }
+    .container { max-width: 940px; margin: 0 auto; }
+    header {
+      background: linear-gradient(135deg, #00897b, #00695c);
+      color: white; padding: 28px 32px; border-radius: 16px; margin-bottom: 28px;
+      box-shadow: 0 8px 24px rgba(0,137,123,0.3);
+    }
+    header h1 { font-size: 1.4rem; font-weight: 700; margin-bottom: 6px; }
+    header p { opacity: 0.95; font-size: 0.95rem; }
+    .badge { display: inline-block; background: rgba(255,255,255,0.25); padding: 4px 12px; border-radius: 20px; font-size: 0.85rem; margin-bottom: 10px; }
+    .exercise {
+      background: var(--card); border-radius: 14px; padding: 28px; margin-bottom: 24px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.06); border: 1px solid var(--border);
+    }
+    .exercise h2 {
+      font-size: 1.1rem; color: var(--primary-dark); margin-bottom: 8px;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .exercise h2 .num {
+      background: var(--primary); color: white; width: 32px; height: 32px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center; font-size: 0.95rem; flex-shrink: 0;
+    }
+    .instruction { color: var(--muted); font-size: 0.95rem; margin-bottom: 16px; }
+    .q-block {
+      background: #e0f2f1; border-radius: 10px; padding: 12px 14px; margin-bottom: 12px;
+      border-left: 4px solid var(--primary);
+    }
+    .q-block .q-text { font-weight: 600; margin-bottom: 8px; font-size: 0.95rem; }
+    .options { display: flex; flex-wrap: wrap; gap: 8px; }
+    .options label {
+      display: flex; align-items: center; gap: 6px; background: white;
+      border: 2px solid #80cbc4; border-radius: 8px; padding: 6px 12px; cursor: pointer; font-size: 0.88rem;
+    }
+    .options label:hover { border-color: var(--primary); }
+    .options input { accent-color: var(--primary); }
+    .options label.correct { border-color: var(--success); background: #e8f5e9; }
+    .options label.wrong { border-color: var(--error); background: #ffebee; }
+    select {
+      font-family: inherit; font-size: 0.9rem; padding: 5px 8px;
+      border: 2px solid #80cbc4; border-radius: 8px; background: white; min-width: 110px;
+    }
+    select:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(0,137,123,0.15); }
+    select.correct { border-color: var(--success); background: #e8f5e9; }
+    select.wrong { border-color: var(--error); background: #ffebee; }
+    .sentence { margin-bottom: 12px; font-size: 0.98rem; line-height: 1.7; }
+    .btn-row { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 18px; }
+    button {
+      font-family: inherit; font-size: 0.95rem; font-weight: 600; padding: 10px 22px;
+      border: none; border-radius: 10px; cursor: pointer;
+    }
+    .btn-check { background: var(--primary); color: white; box-shadow: 0 4px 12px rgba(0,137,123,0.3); }
+    .btn-check:hover { background: var(--primary-dark); }
+    .btn-reset { background: #b2dfdb; color: var(--muted); }
+    .btn-reset:hover { background: #80cbc4; }
+    .btn-total {
+      background: linear-gradient(135deg, #2e7d32, #1b5e20); color: white;
+      font-size: 1.05rem; padding: 14px 28px; box-shadow: 0 4px 16px rgba(46,125,50,0.35);
+    }
+    .feedback { margin-top: 14px; padding: 12px 16px; border-radius: 10px; font-weight: 500; display: none; }
+    .feedback.show { display: block; }
+    .feedback.success { background: #e8f5e9; color: var(--success); border: 1px solid #a5d6a7; }
+    .feedback.error { background: #ffebee; color: var(--error); border: 1px solid #ef9a9a; }
+    .score { font-size: 1.1rem; font-weight: 700; }
+    .total-block {
+      background: var(--card); border-radius: 14px; padding: 32px; margin-bottom: 24px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.06); border: 2px solid var(--primary); text-align: center;
+    }
+    .total-block h2 { font-size: 1.3rem; color: var(--primary-dark); margin-bottom: 8px; }
+    .total-block .hint { color: var(--muted); font-size: 0.95rem; margin-bottom: 20px; }
+    .total-score-display { display: none; margin-top: 20px; padding: 24px; border-radius: 12px; font-size: 1.15rem; }
+    .total-score-display.show { display: block; }
+    .total-score-display.good { background: #e8f5e9; border: 2px solid #a5d6a7; color: var(--success); }
+    .total-score-display.mid { background: #fff8e1; border: 2px solid #ffe082; color: #f57f17; }
+    .total-score-display.bad { background: #ffebee; border: 2px solid #ef9a9a; color: var(--error); }
+    .big-score { font-size: 2.4rem; font-weight: 800; margin: 8px 0 4px; }
+    .breakdown { margin-top: 16px; font-size: 0.95rem; text-align: left; max-width: 440px; margin-left: auto; margin-right: auto; }
+    .breakdown div { display: flex; justify-content: space-between; padding: 4px 0; border-bottom: 1px dashed rgba(0,0,0,0.1); }
+    footer { text-align: center; color: var(--muted); font-size: 0.85rem; margin-top: 10px; padding-bottom: 30px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="badge">NMT-Health 1-h/w</div>
+      <h1>Health · Vocabulary &amp; Grammar</h1>
+      <p>Illness · body · diet · prepositions · collocations · підсумок у кінці</p>
+    </header>
+
+    <!-- EX 1 Dialogues A-C -->
+    <div class="exercise" id="ex1">
+      <h2><span class="num">1</span> Choose the correct answer A, B or C</h2>
+      <p class="instruction">Оберіть правильну відповідь у діалогах. <strong>(6 балів)</strong></p>
+
+      <div class="q-block" data-q="a1">
+        <div class="q-text">1. X: My left knee hurts and I can’t walk fast.<br>Y: When ___?</div>
+        <div class="options">
+          <label><input type="radio" name="a1" value="A"> A the knee hurt you</label>
+          <label><input type="radio" name="a1" value="B"> B you had a pain</label>
+          <label><input type="radio" name="a1" value="C"> C did the pain start</label>
+        </div>
+      </div>
+      <div class="q-block" data-q="a2">
+        <div class="q-text">2. X: Dr Wilson’s surgery. What can I do for you?<br>Y: I’d like to ___ for tomorrow morning.</div>
+        <div class="options">
+          <label><input type="radio" name="a2" value="A"> A make an appointment</label>
+          <label><input type="radio" name="a2" value="B"> B see a doctor</label>
+          <label><input type="radio" name="a2" value="C"> C have a meeting</label>
+        </div>
+      </div>
+      <div class="q-block" data-q="a3">
+        <div class="q-text">3. X: Mum, can I stay at home today? I don’t feel well.<br>Y: OK. But you’ll have to ___ the schoolwork.</div>
+        <div class="options">
+          <label><input type="radio" name="a3" value="A"> A fall behind</label>
+          <label><input type="radio" name="a3" value="B"> B catch up on</label>
+          <label><input type="radio" name="a3" value="C"> C get on with</label>
+        </div>
+      </div>
+      <div class="q-block" data-q="a4">
+        <div class="q-text">4. X: Jeff, do you remember that we need to make some decisions about the project?<br>Y: Can we ___ tomorrow? I’m in a hurry.</div>
+        <div class="options">
+          <label><input type="radio" name="a4" value="A"> A talk it over</label>
+          <label><input type="radio" name="a4" value="B"> B give it up</label>
+          <label><input type="radio" name="a4" value="C"> C hand it in</label>
+        </div>
+      </div>
+      <div class="q-block" data-q="a5">
+        <div class="q-text">5. X: I’d like to know your opinion about social media.<br>Y: ___ social media is very powerful in influencing people’s opinions.</div>
+        <div class="options">
+          <label><input type="radio" name="a5" value="A"> A On the other hand</label>
+          <label><input type="radio" name="a5" value="B"> B Personally, I believe that</label>
+          <label><input type="radio" name="a5" value="C"> C Therefore</label>
+        </div>
+      </div>
+      <div class="q-block" data-q="a6">
+        <div class="q-text">6. X: Carl can’t play basketball since the injury.<br>Y: I’ve heard he’s going to ___ swimming. It’s safe for him.</div>
+        <div class="options">
+          <label><input type="radio" name="a6" value="A"> A take up</label>
+          <label><input type="radio" name="a6" value="B"> B pass out</label>
+          <label><input type="radio" name="a6" value="C"> C turn up</label>
+        </div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn-check" onclick="checkRadio('a', answers.a, 6, 'fb1', 'e1')">Перевірити</button>
+        <button class="btn-reset" onclick="resetRadio('a', 6, 'fb1', 'e1')">Скинути</button>
+      </div>
+      <div class="feedback" id="fb1"></div>
+    </div>
+
+    <!-- EX 2 Health vocab A-C -->
+    <div class="exercise" id="ex2">
+      <h2><span class="num">2</span> Choose the correct answers A–C</h2>
+      <p class="instruction">Оберіть правильне слово. <strong>(5 балів)</strong></p>
+
+      <div class="q-block" data-q="b1">
+        <div class="q-text">1. I’ve got a really bad ___ in my shoulder.</div>
+        <div class="options">
+          <label><input type="radio" name="b1" value="A"> A hurt</label>
+          <label><input type="radio" name="b1" value="B"> B sore</label>
+          <label><input type="radio" name="b1" value="C"> C pain</label>
+        </div>
+      </div>
+      <div class="q-block" data-q="b2">
+        <div class="q-text">2. It’s important to check your heart ___ when you exercise.</div>
+        <div class="options">
+          <label><input type="radio" name="b2" value="A"> A rate</label>
+          <label><input type="radio" name="b2" value="B"> B pulse</label>
+          <label><input type="radio" name="b2" value="C"> C weight</label>
+        </div>
+      </div>
+      <div class="q-block" data-q="b3">
+        <div class="q-text">3. Brad has got a cold. He’s got a runny ___.</div>
+        <div class="options">
+          <label><input type="radio" name="b3" value="A"> A throat</label>
+          <label><input type="radio" name="b3" value="B"> B head</label>
+          <label><input type="radio" name="b3" value="C"> C nose</label>
+        </div>
+      </div>
+      <div class="q-block" data-q="b4">
+        <div class="q-text">4. My dad has decided to work ___, so he’s joined a gym.</div>
+        <div class="options">
+          <label><input type="radio" name="b4" value="A"> A on</label>
+          <label><input type="radio" name="b4" value="B"> B out</label>
+          <label><input type="radio" name="b4" value="C"> C up</label>
+        </div>
+      </div>
+      <div class="q-block" data-q="b5">
+        <div class="q-text">5. The thought of going to the dentist always stresses me ___.</div>
+        <div class="options">
+          <label><input type="radio" name="b5" value="A"> A out</label>
+          <label><input type="radio" name="b5" value="B"> B with</label>
+          <label><input type="radio" name="b5" value="C"> C over</label>
+        </div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn-check" onclick="checkRadio('b', answers.b, 5, 'fb2', 'e2')">Перевірити</button>
+        <button class="btn-reset" onclick="resetRadio('b', 5, 'fb2', 'e2')">Скинути</button>
+      </div>
+      <div class="feedback" id="fb2"></div>
+    </div>
+
+    <!-- EX 3 Prepositions -->
+    <div class="exercise" id="ex3">
+      <h2><span class="num">3</span> Complete with the correct preposition</h2>
+      <p class="instruction">Оберіть прийменник. <strong>(6 балів)</strong></p>
+      <div class="sentence">You need to work <em>out</em> regularly if you want to look like Arnold Schwarzenegger.</div>
+      <div class="sentence">1. I can’t fit into my suit because I’m too fat. I’m going to cut
+        <select id="c1"><option value="">—</option><option value="down">down</option><option value="up">up</option><option value="out">out</option><option value="off">off</option></select>
+        chocolate and sweets.
+      </div>
+      <div class="sentence">2. Sandra has decided to take
+        <select id="c2"><option value="">—</option><option value="up">up</option><option value="on">on</option><option value="out">out</option><option value="over">over</option></select>
+        tennis to try and get fit. She’s never played before!
+      </div>
+      <div class="sentence">3. Joshua returned to work after only three days off work. He always gets
+        <select id="c3"><option value="">—</option><option value="over">over</option><option value="out">out</option><option value="up">up</option><option value="through">through</option></select>
+        the flu quickly.
+      </div>
+      <div class="sentence">4. A woman passed
+        <select id="c4"><option value="">—</option><option value="out">out</option><option value="over">over</option><option value="up">up</option><option value="away">away</option></select>
+        on the bus this morning. Luckily, there was a doctor there to help her.
+      </div>
+      <div class="sentence">5. I didn’t know you suffered
+        <select id="c5"><option value="">—</option><option value="from">from</option><option value="with">with</option><option value="of">of</option><option value="by">by</option></select>
+        a nut allergy. I won’t bake this cake again.
+      </div>
+      <div class="sentence">6. The exams next week are really stressing Adam
+        <select id="c6"><option value="">—</option><option value="out">out</option><option value="over">over</option><option value="up">up</option><option value="on">on</option></select>.
+        He should learn how to meditate to stay calm.
+      </div>
+      <div class="btn-row">
+        <button class="btn-check" onclick="checkSel('c', answers.c, 6, 'fb3', 'e3')">Перевірити</button>
+        <button class="btn-reset" onclick="resetSel('c', [1,2,3,4,5,6], 'fb3', 'e3')">Скинути</button>
+      </div>
+      <div class="feedback" id="fb3"></div>
+    </div>
+
+    <!-- EX 4 Diet dialogue choices -->
+    <div class="exercise" id="ex4">
+      <h2><span class="num">4</span> Choose the correct options (diet &amp; health)</h2>
+      <p class="instruction">Оберіть правильний варіант у кожній парі. <strong>(14 балів)</strong></p>
+      <div class="sentence">1. Right, so you’ve
+        <select id="d1"><option value="">—</option><option value="made">made</option><option value="done">done</option></select>
+        the big decision to
+        <select id="d2"><option value="">—</option><option value="lose">lose</option><option value="keep">keep</option></select>
+        weight? Great!
+      </div>
+      <div class="sentence">2. The high-tech machines will help you to
+        <select id="d3"><option value="">—</option><option value="check">check</option><option value="keep">keep</option></select>
+        your heart rate.
+      </div>
+      <div class="sentence">3. You need to learn how to
+        <select id="d4"><option value="">—</option><option value="make">make</option><option value="do">do</option></select>
+        the right food choices.
+      </div>
+      <div class="sentence">4. I think I
+        <select id="d5"><option value="">—</option><option value="am">am</option><option value="have">have</option></select>
+        allergic to something I’m eating.
+      </div>
+      <div class="sentence">5. One sign is
+        <select id="d6"><option value="">—</option><option value="coming">coming</option><option value="being">being</option></select>
+        out in spots.
+      </div>
+      <div class="sentence">6. Start by
+        <select id="d7"><option value="">—</option><option value="keeping">keeping</option><option value="losing">losing</option></select>
+        track of what you eat.
+      </div>
+      <div class="sentence">7.
+        <select id="d8"><option value="">—</option><option value="Am">Am</option><option value="Have">Have</option></select>
+        I asthmatic?
+      </div>
+      <div class="sentence">8. Try to
+        <select id="d9"><option value="">—</option><option value="reduce">reduce</option><option value="lose">lose</option></select>
+        the anxiety in your life.
+      </div>
+      <div class="sentence">9.
+        <select id="d10"><option value="">—</option><option value="check">check</option><option value="make">make</option></select>
+        your pulse regularly.
+      </div>
+      <div class="sentence">10. I’ve
+        <select id="d11"><option value="">—</option><option value="lost">lost</option><option value="reduced">reduced</option></select>
+        my appetite. What’s wrong with me?
+      </div>
+      <div class="sentence">11. Try to
+        <select id="d12"><option value="">—</option><option value="reduce">reduce</option><option value="lose">lose</option></select>
+        the amount of stress you have.
+      </div>
+      <div class="sentence">12. Have you
+        <select id="d13"><option value="">—</option><option value="come">come</option><option value="make">make</option></select>
+        out in a rash?
+      </div>
+      <div class="sentence">13. Try to
+        <select id="d14"><option value="">—</option><option value="keep">keep</option><option value="be">be</option></select>
+        fit. Exercise is a great way to get rid of stress.
+      </div>
+      <div class="btn-row">
+        <button class="btn-check" onclick="checkSel('d', answers.d, 14, 'fb4', 'e4')">Перевірити</button>
+        <button class="btn-reset" onclick="resetSel('d', [1,2,3,4,5,6,7,8,9,10,11,12,13,14], 'fb4', 'e4')">Скинути</button>
+      </div>
+      <div class="feedback" id="fb4"></div>
+    </div>
+
+    <!-- EX 5 Choose options -->
+    <div class="exercise" id="ex5">
+      <h2><span class="num">5</span> Choose the correct options</h2>
+      <p class="instruction">Оберіть правильне слово. <strong>(5 балів)</strong></p>
+      <div class="sentence">1. I’ve never been
+        <select id="e1"><option value="">—</option><option value="allergic">allergic</option><option value="ill">ill</option><option value="dizzy">dizzy</option></select>
+        to dust.
+      </div>
+      <div class="sentence">2. Tim’s had an awful sick /
+        <select id="e2"><option value="">—</option><option value="chest">chest</option><option value="cough">cough</option></select>
+        for two weeks.
+      </div>
+      <div class="sentence">3. An indoor skating
+        <select id="e3"><option value="">—</option><option value="rink">rink</option><option value="ring">ring</option><option value="pool">pool</option></select>
+        has been built in our town.
+      </div>
+      <div class="sentence">4. When they saw Sarah
+        <select id="e4"><option value="">—</option><option value="pass">pass</option><option value="hang">hang</option><option value="find">find</option></select>
+        out during the match, they called an ambulance.
+      </div>
+      <div class="sentence">5. By the time Mark suffered from /
+        <select id="e5"><option value="">—</option><option value="got over">got over</option><option value="worked out">worked out</option></select>
+        the indigestion, he hadn’t eaten anything.
+      </div>
+      <div class="btn-row">
+        <button class="btn-check" onclick="checkSel('e', answers.e, 5, 'fb5', 'e5')">Перевірити</button>
+        <button class="btn-reset" onclick="resetSel('e', [1,2,3,4,5], 'fb5', 'e5')">Скинути</button>
+      </div>
+      <div class="feedback" id="fb5"></div>
+    </div>
+
+    <!-- EX 6 Dr Simple tips -->
+    <div class="exercise" id="ex6">
+      <h2><span class="num">6</span> Dr Simple’s tips – body parts</h2>
+      <p class="instruction">Доповніть частинами тіла. <strong>(5 балів)</strong></p>
+      <div class="sentence">TIP 1: Yoga can really help if your <em>back</em> hurts.</div>
+      <div class="sentence">TIP 2: If you’ve got a runny
+        <select id="f1"><option value="">—</option><option value="nose">nose</option><option value="throat">throat</option><option value="eye">eye</option><option value="ear">ear</option></select>,
+        you should buy a big box of tissues.
+      </div>
+      <div class="sentence">TIP 3: Drink lots of water to help with a sore
+        <select id="f2"><option value="">—</option><option value="throat">throat</option><option value="nose">nose</option><option value="chest">chest</option><option value="head">head</option></select>.
+        And only sing when you’re in the shower.
+      </div>
+      <div class="sentence">TIP 4: You’ve got a pain in the
+        <select id="f3"><option value="">—</option><option value="chest">chest</option><option value="heart">heart</option><option value="stomach">stomach</option><option value="back">back</option></select>?
+        Then maybe you need to see a love doctor!
+      </div>
+      <div class="sentence">TIP 5: Sending too many text messages … if your
+        <select id="f4"><option value="">—</option><option value="thumb">thumb</option><option value="wrist">wrist</option><option value="neck">neck</option><option value="finger">finger</option></select>
+        hurts.
+      </div>
+      <div class="sentence">TIP 6: A pain in the
+        <select id="f5"><option value="">—</option><option value="shoulder">shoulder</option><option value="elbow">elbow</option><option value="knee">knee</option><option value="ankle">ankle</option></select>
+        can be the result of moving your arms too much.
+      </div>
+      <div class="btn-row">
+        <button class="btn-check" onclick="checkSel('f', answers.f, 5, 'fb6', 'e6')">Перевірити</button>
+        <button class="btn-reset" onclick="resetSel('f', [1,2,3,4,5], 'fb6', 'e6')">Скинути</button>
+      </div>
+      <div class="feedback" id="fb6"></div>
+    </div>
+
+    <!-- EX 7 Matching -->
+    <div class="exercise" id="ex7">
+      <h2><span class="num">7</span> Match the beginnings and endings</h2>
+      <p class="instruction">Зіставте початки з кінцівками. <strong>(6 балів)</strong></p>
+      <div class="sentence">1. The only way to lose
+        <select id="g1"><option value="">—</option><option value="c">c weight is to eat less and exercise more!</option><option value="a">a healthy food choices.</option><option value="f">f track of the calories you eat in a day.</option><option value="d">d a rash because of something they’ve eaten.</option></select>
+      </div>
+      <div class="sentence">2. Children don’t know how to make
+        <select id="g2"><option value="">—</option><option value="a">a healthy food choices.</option><option value="c">c weight is to eat less and exercise more!</option><option value="e">e their pulse.</option><option value="b">b to nuts, you should tell everybody.</option></select>
+      </div>
+      <div class="sentence">3. It’s important to keep
+        <select id="g3"><option value="">—</option><option value="f">f track of the calories you eat in a day.</option><option value="e">e their pulse.</option><option value="a">a healthy food choices.</option><option value="c">c weight is to eat less and exercise more!</option></select>
+      </div>
+      <div class="sentence">4. People usually come out in
+        <select id="g4"><option value="">—</option><option value="d">d a rash because of something they’ve eaten.</option><option value="b">b to nuts, you should tell everybody.</option><option value="e">e their pulse.</option><option value="a">a healthy food choices.</option></select>
+      </div>
+      <div class="sentence">5. If you are allergic
+        <select id="g5"><option value="">—</option><option value="b">b to nuts, you should tell everybody.</option><option value="d">d a rash because of something they’ve eaten.</option><option value="f">f track of the calories you eat in a day.</option><option value="e">e their pulse.</option></select>
+      </div>
+      <div class="sentence">6. Most people don’t know how to check
+        <select id="g6"><option value="">—</option><option value="e">e their pulse.</option><option value="f">f track of the calories you eat in a day.</option><option value="a">a healthy food choices.</option><option value="c">c weight is to eat less and exercise more!</option></select>
+      </div>
+      <div class="btn-row">
+        <button class="btn-check" onclick="checkSel('g', answers.g, 6, 'fb7', 'e7')">Перевірити</button>
+        <button class="btn-reset" onclick="resetSel('g', [1,2,3,4,5,6], 'fb7', 'e7')">Скинути</button>
+      </div>
+      <div class="feedback" id="fb7"></div>
+    </div>
+
+    <!-- EX 8 Body parts -->
+    <div class="exercise" id="ex8">
+      <h2><span class="num">8</span> Complete with the correct body parts</h2>
+      <p class="instruction">Оберіть частину тіла. <strong>(6 балів)</strong></p>
+      <div class="sentence">When humans sneeze, air passes out of the <em>nose</em> at over 160 kilometres per hour.</div>
+      <div class="sentence">1. In many European countries, male friends kiss female friends – but not on the
+        <select id="h1"><option value="">—</option><option value="lips">lips</option><option value="cheek">cheek</option><option value="nose">nose</option><option value="hand">hand</option></select>!
+      </div>
+      <div class="sentence">2. Yesterday my granddad bit into a really hard nut and broke his left front
+        <select id="h2"><option value="">—</option><option value="tooth">tooth</option><option value="teeth">teeth</option><option value="jaw">jaw</option><option value="lip">lip</option></select>.
+      </div>
+      <div class="sentence">3. Some geckos lick their own eyes clean with their
+        <select id="h3"><option value="">—</option><option value="tongues">tongues</option><option value="fingers">fingers</option><option value="noses">noses</option><option value="tails">tails</option></select>.
+      </div>
+      <div class="sentence">4. Camels have beautiful long
+        <select id="h4"><option value="">—</option><option value="eyelashes">eyelashes</option><option value="eyebrows">eyebrows</option><option value="eyelids">eyelids</option><option value="hairs">hairs</option></select>
+        to protect their eyes from sand.
+      </div>
+      <div class="sentence">5. Do you know why we have
+        <select id="h5"><option value="">—</option><option value="eyelids">eyelids</option><option value="eyelashes">eyelashes</option><option value="eyebrows">eyebrows</option><option value="eyes">eyes</option></select>?
+        They keep rain and sweat away from our eyes.
+      </div>
+      <div class="sentence">6. The bowhead whale has the largest
+        <select id="h6"><option value="">—</option><option value="mouth">mouth</option><option value="tongue">tongue</option><option value="nose">nose</option><option value="jaw">jaw</option></select>
+        of all animals. It could easily swallow four horses!
+      </div>
+      <div class="btn-row">
+        <button class="btn-check" onclick="checkSel('h', answers.h, 6, 'fb8', 'e8')">Перевірити</button>
+        <button class="btn-reset" onclick="resetSel('h', [1,2,3,4,5,6], 'fb8', 'e8')">Скинути</button>
+      </div>
+      <div class="feedback" id="fb8"></div>
+    </div>
+
+    <!-- TOTAL -->
+    <div class="total-block">
+      <h2>📝 Підсумок домашнього завдання</h2>
+      <p class="hint">Спочатку перевірте кожну вправу, потім натисніть кнопку нижче.</p>
+      <button class="btn-total" onclick="calcTotal()">Порахувати загальний бал</button>
+      <div class="total-score-display" id="totalDisplay"></div>
+    </div>
+
+    <footer>
+      NMT-Health 1-h/w · Health vocabulary &amp; grammar<br>
+      Максимум: <strong>53 бали</strong>
+    </footer>
+  </div>
+
+  <script>
+    const answers = {
+      a: {1:'C',2:'A',3:'B',4:'A',5:'B',6:'A'},
+      b: {1:'C',2:'A',3:'C',4:'B',5:'A'},
+      c: {1:'down',2:'up',3:'over',4:'out',5:'from',6:'out'},
+      d: {1:'made',2:'lose',3:'check',4:'make',5:'am',6:'coming',7:'keeping',8:'Am',9:'reduce',10:'check',11:'lost',12:'reduce',13:'come',14:'keep'},
+      e: {1:'allergic',2:'chest',3:'rink',4:'pass',5:'got over'},
+      f: {1:'nose',2:'throat',3:'chest',4:'thumb',5:'shoulder'},
+      g: {1:'c',2:'a',3:'f',4:'d',5:'b',6:'e'},
+      h: {1:'lips',2:'tooth',3:'tongues',4:'eyelashes',5:'eyelids',6:'mouth'}
+    };
+    const lastScores = {e1:null,e2:null,e3:null,e4:null,e5:null,e6:null,e7:null,e8:null};
+
+    function showFb(id,c,t){
+      const fb=document.getElementById(id);
+      fb.classList.add('show');
+      if(c===t){fb.className='feedback show success';fb.innerHTML='✅ Чудово! '+c+' / '+t;}
+      else{fb.className='feedback show error';fb.innerHTML='Результат: <span class="score">'+c+' / '+t+'</span>. Перевірте червоні поля.';}
+    }
+    function clearTotal(){document.getElementById('totalDisplay').className='total-score-display';document.getElementById('totalDisplay').innerHTML='';}
+
+    function checkRadio(prefix, ans, total, fbId, key){
+      let c=0;
+      for(const[k,v] of Object.entries(ans)){
+        const radios=document.querySelectorAll('input[name="'+prefix+k+'"]');
+        const labels=document.querySelectorAll('.q-block[data-q="'+prefix+k+'"] label');
+        labels.forEach(function(l){l.classList.remove('correct','wrong');});
+        let sel=null;
+        radios.forEach(function(r){if(r.checked) sel=r.value;});
+        if(sel===v){c++;labels.forEach(function(l){if(l.querySelector('input').value===sel) l.classList.add('correct');});}
+        else if(sel){labels.forEach(function(l){if(l.querySelector('input').value===sel) l.classList.add('wrong');});}
+      }
+      lastScores[key]={correct:c,total:total};
+      showFb(fbId,c,total);
+    }
+    function resetRadio(prefix, n, fbId, key){
+      for(let i=1;i<=n;i++){
+        document.querySelectorAll('input[name="'+prefix+i+'"]').forEach(function(r){r.checked=false;});
+        document.querySelectorAll('.q-block[data-q="'+prefix+i+'"] label').forEach(function(l){l.classList.remove('correct','wrong');});
+      }
+      document.getElementById(fbId).className='feedback';lastScores[key]=null;clearTotal();
+    }
+
+    function checkSel(prefix, ans, total, fbId, key){
+      let c=0;
+      for(const[k,v] of Object.entries(ans)){
+        const el=document.getElementById(prefix+k);
+        if(!el) continue;
+        el.classList.remove('correct','wrong');
+        if(el.value===v){el.classList.add('correct');c++;}
+        else if(el.value) el.classList.add('wrong');
+      }
+      lastScores[key]={correct:c,total:total};
+      showFb(fbId,c,total);
+    }
+    function resetSel(prefix, keys, fbId, key){
+      keys.forEach(function(k){const el=document.getElementById(prefix+k);if(el){el.value='';el.classList.remove('correct','wrong');}});
+      document.getElementById(fbId).className='feedback';lastScores[key]=null;clearTotal();
+    }
+
+    function calcTotal(){
+      if(!lastScores.e1) checkRadio('a',answers.a,6,'fb1','e1');
+      if(!lastScores.e2) checkRadio('b',answers.b,5,'fb2','e2');
+      if(!lastScores.e3) checkSel('c',answers.c,6,'fb3','e3');
+      if(!lastScores.e4) checkSel('d',answers.d,14,'fb4','e4');
+      if(!lastScores.e5) checkSel('e',answers.e,5,'fb5','e5');
+      if(!lastScores.e6) checkSel('f',answers.f,5,'fb6','e6');
+      if(!lastScores.e7) checkSel('g',answers.g,6,'fb7','e7');
+      if(!lastScores.e8) checkSel('h',answers.h,6,'fb8','e8');
+      var s1=lastScores.e1.correct,s2=lastScores.e2.correct,s3=lastScores.e3.correct,s4=lastScores.e4.correct;
+      var s5=lastScores.e5.correct,s6=lastScores.e6.correct,s7=lastScores.e7.correct,s8=lastScores.e8.correct;
+      var total=s1+s2+s3+s4+s5+s6+s7+s8, max=53, pct=Math.round((total/max)*100);
+      var display=document.getElementById('totalDisplay');
+      var cls,msg;
+      if(pct>=80){cls='good';msg='Відмінно! 🎉';}
+      else if(pct>=50){cls='mid';msg='Добре, є над чим попрацювати.';}
+      else{cls='bad';msg='Потрібно повторити матеріал.';}
+      display.className='total-score-display show '+cls;
+      display.innerHTML='<div>'+msg+'</div><div class="big-score">'+total+' / '+max+'</div><div>'+pct+'%</div><div class="breakdown"><div><span>1. Dialogues A–C</span><span>'+s1+' / 6</span></div><div><span>2. Health vocab A–C</span><span>'+s2+' / 5</span></div><div><span>3. Prepositions</span><span>'+s3+' / 6</span></div><div><span>4. Diet &amp; health options</span><span>'+s4+' / 14</span></div><div><span>5. Choose options</span><span>'+s5+' / 5</span></div><div><span>6. Dr Simple’s tips</span><span>'+s6+' / 5</span></div><div><span>7. Matching</span><span>'+s7+' / 6</span></div><div><span>8. Body parts</span><span>'+s8+' / 6</span></div></div>';
+    }
+  </script>
+</body>
+</html>

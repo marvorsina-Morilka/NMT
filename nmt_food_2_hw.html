@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NMT-Food 2-h/w</title>
+  <style>
+    :root {
+      --primary: #c62828;
+      --primary-dark: #8e0000;
+      --success: #2e7d32;
+      --error: #b71c1c;
+      --bg: #fce4ec;
+      --card: #ffffff;
+      --border: #ef9a9a;
+      --text: #1a1a2e;
+      --muted: #6d4c41;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; padding: 20px; }
+    .container { max-width: 940px; margin: 0 auto; }
+    header {
+      background: linear-gradient(135deg, #c62828, #8e0000);
+      color: white; padding: 28px 32px; border-radius: 16px; margin-bottom: 28px;
+      box-shadow: 0 8px 24px rgba(198,40,40,0.3);
+    }
+    header h1 { font-size: 1.4rem; font-weight: 700; margin-bottom: 6px; }
+    header p { opacity: 0.95; font-size: 0.95rem; }
+    .badge { display: inline-block; background: rgba(255,255,255,0.25); padding: 4px 12px; border-radius: 20px; font-size: 0.85rem; margin-bottom: 10px; }
+    .exercise {
+      background: var(--card); border-radius: 14px; padding: 28px; margin-bottom: 24px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.06); border: 1px solid var(--border);
+    }
+    .exercise h2 {
+      font-size: 1.1rem; color: var(--primary-dark); margin-bottom: 8px;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .exercise h2 .num {
+      background: var(--primary); color: white; width: 32px; height: 32px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center; font-size: 0.95rem; flex-shrink: 0;
+    }
+    .instruction { color: var(--muted); font-size: 0.95rem; margin-bottom: 16px; }
+    .word-box { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
+    .word-tag {
+      background: #fce4ec; color: var(--primary-dark); padding: 5px 12px; border-radius: 20px;
+      font-size: 0.88rem; font-weight: 500; border: 1px solid #ef9a9a;
+    }
+    .sentence { margin-bottom: 12px; font-size: 0.98rem; line-height: 1.7; }
+    .q-block {
+      background: #fce4ec; border-radius: 10px; padding: 12px 14px; margin-bottom: 12px;
+      border-left: 4px solid var(--primary);
+    }
+    .q-block .q-text { font-weight: 600; margin-bottom: 8px; font-size: 0.95rem; }
+    .options { display: flex; flex-wrap: wrap; gap: 8px; }
+    .options label {
+      display: flex; align-items: center; gap: 6px; background: white;
+      border: 2px solid #ef9a9a; border-radius: 8px; padding: 6px 12px; cursor: pointer; font-size: 0.88rem;
+    }
+    .options label:hover { border-color: var(--primary); }
+    .options input { accent-color: var(--primary); }
+    .options label.correct { border-color: var(--success); background: #e8f5e9; }
+    .options label.wrong { border-color: var(--error); background: #ffebee; }
+    select {
+      font-family: inherit; font-size: 0.9rem; padding: 5px 8px;
+      border: 2px solid #ef9a9a; border-radius: 8px; background: white; min-width: 120px;
+    }
+    select:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(198,40,40,0.15); }
+    select.correct { border-color: var(--success); background: #e8f5e9; }
+    select.wrong { border-color: var(--error); background: #ffebee; }
+    .btn-row { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 18px; }
+    button {
+      font-family: inherit; font-size: 0.95rem; font-weight: 600; padding: 10px 22px;
+      border: none; border-radius: 10px; cursor: pointer;
+    }
+    .btn-check { background: var(--primary); color: white; box-shadow: 0 4px 12px rgba(198,40,40,0.3); }
+    .btn-check:hover { background: var(--primary-dark); }
+    .btn-reset { background: #ffcdd2; color: var(--muted); }
+    .btn-reset:hover { background: #ef9a9a; }
+    .btn-total {
+      background: linear-gradient(135deg, #2e7d32, #1b5e20); color: white;
+      font-size: 1.05rem; padding: 14px 28px; box-shadow: 0 4px 16px rgba(46,125,50,0.35);
+    }
+    .feedback { margin-top: 14px; padding: 12px 16px; border-radius: 10px; font-weight: 500; display: none; }
+    .feedback.show { display: block; }
+    .feedback.success { background: #e8f5e9; color: var(--success); border: 1px solid #a5d6a7; }
+    .feedback.error { background: #ffebee; color: var(--error); border: 1px solid #ef9a9a; }
+    .score { font-size: 1.1rem; font-weight: 700; }
+    .total-block {
+      background: var(--card); border-radius: 14px; padding: 32px; margin-bottom: 24px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.06); border: 2px solid var(--primary); text-align: center;
+    }
+    .total-block h2 { font-size: 1.3rem; color: var(--primary-dark); margin-bottom: 8px; }
+    .total-block .hint { color: var(--muted); font-size: 0.95rem; margin-bottom: 20px; }
+    .total-score-display { display: none; margin-top: 20px; padding: 24px; border-radius: 12px; font-size: 1.15rem; }
+    .total-score-display.show { display: block; }
+    .total-score-display.good { background: #e8f5e9; border: 2px solid #a5d6a7; color: var(--success); }
+    .total-score-display.mid { background: #fff8e1; border: 2px solid #ffe082; color: #f57f17; }
+    .total-score-display.bad { background: #ffebee; border: 2px solid #ef9a9a; color: var(--error); }
+    .big-score { font-size: 2.4rem; font-weight: 800; margin: 8px 0 4px; }
+    .breakdown { margin-top: 16px; font-size: 0.95rem; text-align: left; max-width: 440px; margin-left: auto; margin-right: auto; }
+    .breakdown div { display: flex; justify-content: space-between; padding: 4px 0; border-bottom: 1px dashed rgba(0,0,0,0.1); }
+    footer { text-align: center; color: var(--muted); font-size: 0.85rem; margin-top: 10px; padding-bottom: 30px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="badge">NMT-Food 2-h/w</div>
+      <h1>Food · Vocabulary &amp; Collocations</h1>
+      <p>Diet · adjectives · food types · підсумок у кінці</p>
+    </header>
+
+    <!-- EX 1 Food diary MCQ -->
+    <div class="exercise" id="ex1">
+      <h2><span class="num">1</span> Food diary – choose A–D</h2>
+      <p class="instruction">Оберіть правильну відповідь. <strong>(9 балів)</strong></p>
+
+      <div class="q-block" data-q="a0">
+        <div class="q-text">0. I just had a ___ meal for breakfast.</div>
+        <div class="options">
+          <label><input type="radio" name="a0" value="A"> A light</label>
+          <label><input type="radio" name="a0" value="B"> B slim</label>
+          <label><input type="radio" name="a0" value="C"> C balanced</label>
+          <label><input type="radio" name="a0" value="D"> D short</label>
+        </div>
+      </div>
+      <div class="q-block" data-q="a1">
+        <div class="q-text">1. I toasted a ___ of brown bread.</div>
+        <div class="options">
+          <label><input type="radio" name="a1" value="A"> A loaf</label>
+          <label><input type="radio" name="a1" value="B"> B starter</label>
+          <label><input type="radio" name="a1" value="C"> C slice</label>
+          <label><input type="radio" name="a1" value="D"> D side</label>
+        </div>
+      </div>
+      <div class="q-block" data-q="a2">
+        <div class="q-text">2. Last week I tried to ___ breakfast completely.</div>
+        <div class="options">
+          <label><input type="radio" name="a2" value="A"> A jump</label>
+          <label><input type="radio" name="a2" value="B"> B leave</label>
+          <label><input type="radio" name="a2" value="C"> C throw</label>
+          <label><input type="radio" name="a2" value="D"> D skip</label>
+        </div>
+      </div>
+      <div class="q-block" data-q="a3">
+        <div class="q-text">3. It’s a pizzeria, and that’s basically ___ food!</div>
+        <div class="options">
+          <label><input type="radio" name="a3" value="A"> A fast</label>
+          <label><input type="radio" name="a3" value="B"> B balanced</label>
+          <label><input type="radio" name="a3" value="C"> C hot</label>
+          <label><input type="radio" name="a3" value="D"> D healthy</label>
+        </div>
+      </div>
+      <div class="q-block" data-q="a4">
+        <div class="q-text">4. I’ve ___ chocolate, biscuits, potatoes…</div>
+        <div class="options">
+          <label><input type="radio" name="a4" value="A"> A cut off</label>
+          <label><input type="radio" name="a4" value="B"> B cut down on</label>
+          <label><input type="radio" name="a4" value="C"> C put off</label>
+          <label><input type="radio" name="a4" value="D"> D turned down</label>
+        </div>
+      </div>
+      <div class="q-block" data-q="a5">
+        <div class="q-text">5. …and everything else that’s ___.</div>
+        <div class="options">
+          <label><input type="radio" name="a5" value="A"> A fresh</label>
+          <label><input type="radio" name="a5" value="B"> B delicious</label>
+          <label><input type="radio" name="a5" value="C"> C disgusting</label>
+          <label><input type="radio" name="a5" value="D"> D crunchy</label>
+        </div>
+      </div>
+      <div class="q-block" data-q="a6">
+        <div class="q-text">6. I really need to get back in ___ for my summer holiday.</div>
+        <div class="options">
+          <label><input type="radio" name="a6" value="A"> A form</label>
+          <label><input type="radio" name="a6" value="B"> B figure</label>
+          <label><input type="radio" name="a6" value="C"> C shape</label>
+          <label><input type="radio" name="a6" value="D"> D outline</label>
+        </div>
+      </div>
+      <div class="q-block" data-q="a7">
+        <div class="q-text">7. So, a ___ meal at Mario’s…</div>
+        <div class="options">
+          <label><input type="radio" name="a7" value="A"> A three-part</label>
+          <label><input type="radio" name="a7" value="B"> B three-section</label>
+          <label><input type="radio" name="a7" value="C"> C three-plate</label>
+          <label><input type="radio" name="a7" value="D"> D three-course</label>
+        </div>
+      </div>
+      <div class="q-block" data-q="a8">
+        <div class="q-text">8. …but she could have chosen a restaurant with some healthy options, ___ she?</div>
+        <div class="options">
+          <label><input type="radio" name="a8" value="A"> A could</label>
+          <label><input type="radio" name="a8" value="B"> B couldn’t</label>
+          <label><input type="radio" name="a8" value="C"> C can’t</label>
+          <label><input type="radio" name="a8" value="D"> D can</label>
+        </div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn-check" onclick="checkRadio('a', answers.a, 9, 'fb1', 'e1')">Перевірити</button>
+        <button class="btn-reset" onclick="resetRadio('a', [0,1,2,3,4,5,6,7,8], 'fb1', 'e1')">Скинути</button>
+      </div>
+      <div class="feedback" id="fb1"></div>
+    </div>
+
+    <!-- EX 2 Adjectives first letter -->
+    <div class="exercise" id="ex2">
+      <h2><span class="num">2</span> Complete the adjectives</h2>
+      <p class="instruction">Оберіть прикметник (перша літера дана). <strong>(6 балів)</strong></p>
+      <div class="sentence">1. Eating
+        <select id="b1"><option value="">—</option><option value="raw">raw</option><option value="ripe">ripe</option><option value="rare">rare</option><option value="red">red</option></select>
+        meat is not safe.
+      </div>
+      <div class="sentence">2. I find
+        <select id="b2"><option value="">—</option><option value="sparkling">sparkling</option><option value="still">still</option><option value="soft">soft</option><option value="sour">sour</option></select>
+        water more refreshing than normal water.
+      </div>
+      <div class="sentence">3. We always use
+        <select id="b3"><option value="">—</option><option value="wholemeal">wholemeal</option><option value="white">white</option><option value="wheat">wheat</option><option value="warm">warm</option></select>
+        bread for sandwiches.
+      </div>
+      <div class="sentence">4. I hate the
+        <select id="b4"><option value="">—</option><option value="bitter">bitter</option><option value="bad">bad</option><option value="black">black</option><option value="burnt">burnt</option></select>
+        taste of coffee.
+      </div>
+      <div class="sentence">5. It’s OK to use
+        <select id="b5"><option value="">—</option><option value="tinned">tinned</option><option value="tasty">tasty</option><option value="thick">thick</option><option value="tough">tough</option></select>
+        ones (tomatoes).
+      </div>
+      <div class="sentence">6. The apples on our tree are still
+        <select id="b6"><option value="">—</option><option value="unripe">unripe</option><option value="ugly">ugly</option><option value="unusual">unusual</option><option value="uneaten">uneaten</option></select>
+        so we have to wait.
+      </div>
+      <div class="btn-row">
+        <button class="btn-check" onclick="checkSel('b', answers.b, 6, 'fb2', 'e2')">Перевірити</button>
+        <button class="btn-reset" onclick="resetSel('b', [1,2,3,4,5,6], 'fb2', 'e2')">Скинути</button>
+      </div>
+      <div class="feedback" id="fb2"></div>
+    </div>
+
+    <!-- EX 3 Collocations from box -->
+    <div class="exercise" id="ex3">
+      <h2><span class="num">3</span> Complete with phrases from the box</h2>
+      <p class="instruction">Оберіть правильну фразу. <strong>(5 балів)</strong></p>
+      <div class="word-box">
+        <span class="word-tag">fattening food</span>
+        <span class="word-tag">ground pepper</span>
+        <span class="word-tag">human consumption</span>
+        <span class="word-tag">tourist industry</span>
+        <span class="word-tag">vegetarian diet</span>
+      </div>
+      <div class="sentence">1. I believe that if food is not safe for
+        <select id="c1"><option value="">—</option><option value="human consumption">human consumption</option><option value="tourist industry">tourist industry</option><option value="vegetarian diet">vegetarian diet</option><option value="fattening food">fattening food</option></select>,
+        animals shouldn’t eat it either.
+      </div>
+      <div class="sentence">2. Because the
+        <select id="c2"><option value="">—</option><option value="tourist industry">tourist industry</option><option value="human consumption">human consumption</option><option value="vegetarian diet">vegetarian diet</option><option value="fattening food">fattening food</option></select>
+        is growing in our town, many new restaurants are opening.
+      </div>
+      <div class="sentence">3. I really enjoy
+        <select id="c3"><option value="">—</option><option value="fattening food">fattening food</option><option value="ground pepper">ground pepper</option><option value="vegetarian diet">vegetarian diet</option><option value="human consumption">human consumption</option></select>
+        like chips and cakes…
+      </div>
+      <div class="sentence">4. Following a
+        <select id="c4"><option value="">—</option><option value="vegetarian diet">vegetarian diet</option><option value="tourist industry">tourist industry</option><option value="fattening food">fattening food</option><option value="ground pepper">ground pepper</option></select>
+        can have a positive impact on your health.
+      </div>
+      <div class="sentence">5. Freshly
+        <select id="c5"><option value="">—</option><option value="ground pepper">ground pepper</option><option value="fattening food">fattening food</option><option value="human consumption">human consumption</option><option value="vegetarian diet">vegetarian diet</option></select>
+        has a lot of flavour and I love it in soups.
+      </div>
+      <div class="btn-row">
+        <button class="btn-check" onclick="checkSel('c', answers.c, 5, 'fb3', 'e3')">Перевірити</button>
+        <button class="btn-reset" onclick="resetSel('c', [1,2,3,4,5], 'fb3', 'e3')">Скинути</button>
+      </div>
+      <div class="feedback" id="fb3"></div>
+    </div>
+
+    <!-- EX 4 Choose the correct words -->
+    <div class="exercise" id="ex4">
+      <h2><span class="num">4</span> Choose the correct words</h2>
+      <p class="instruction">Оберіть правильне слово. <strong>(10 балів)</strong></p>
+      <div class="sentence">1. Jackie doesn’t like spicy food, so don’t add too many
+        <select id="d1"><option value="">—</option><option value="chilli peppers">chilli peppers</option><option value="figs">figs</option><option value="carrots">carrots</option></select>
+        to the curry.
+      </div>
+      <div class="sentence">2. Mum, how do I know if this baked potato is
+        <select id="d2"><option value="">—</option><option value="cooked">cooked</option><option value="stale">stale</option><option value="ripe">ripe</option></select>?
+      </div>
+      <div class="sentence">3. I prefer chicken to beef because white meat is not as
+        <select id="d3"><option value="">—</option><option value="fatty">fatty</option><option value="lean">lean</option><option value="raw">raw</option></select>
+        as dark meat.
+      </div>
+      <div class="sentence">4. Where did you buy these
+        <select id="d4"><option value="">—</option><option value="radishes">radishes</option><option value="beetroots">beetroots</option><option value="cherries">cherries</option></select>?
+        They’re really hot!
+      </div>
+      <div class="sentence">5. How does your dad make such wonderful
+        <select id="d5"><option value="">—</option><option value="home-made">home-made</option><option value="tinned">tinned</option><option value="crunchy">crunchy</option></select>
+        soup?
+      </div>
+      <div class="sentence">6. Wow! This coffee is extremely
+        <select id="d6"><option value="">—</option><option value="bitter">bitter</option><option value="sour">sour</option><option value="sweet">sweet</option></select>.
+        Could you pass the sugar, please?
+      </div>
+      <div class="sentence">7. If you eat
+        <select id="d7"><option value="">—</option><option value="unripe">unripe</option><option value="cooked">cooked</option><option value="fresh">fresh</option></select>
+        fruit, you may get stomachache.
+      </div>
+      <div class="sentence">8. My young brother will have
+        <select id="d8"><option value="">—</option><option value="spinach">spinach</option><option value="cauliflower">cauliflower</option><option value="pumpkin">pumpkin</option></select>
+        because he says he loves green!
+      </div>
+      <div class="sentence">9. Grandma can’t eat
+        <select id="d9"><option value="">—</option><option value="crunchy">crunchy</option><option value="stale">stale</option><option value="sour">sour</option></select>
+        food because she doesn’t have her own teeth!
+      </div>
+      <div class="sentence">10. Jess spilled
+        <select id="d10"><option value="">—</option><option value="beetroot">beetroot</option><option value="syrup">syrup</option><option value="grapefruit">grapefruit</option></select>
+        all down her white blouse.
+      </div>
+      <div class="btn-row">
+        <button class="btn-check" onclick="checkSel('d', answers.d, 10, 'fb4', 'e4')">Перевірити</button>
+        <button class="btn-reset" onclick="resetSel('d', [1,2,3,4,5,6,7,8,9,10], 'fb4', 'e4')">Скинути</button>
+      </div>
+      <div class="feedback" id="fb4"></div>
+    </div>
+
+    <!-- TOTAL -->
+    <div class="total-block">
+      <h2>📝 Підсумок домашнього завдання</h2>
+      <p class="hint">Спочатку перевірте кожну вправу, потім натисніть кнопку нижче.</p>
+      <button class="btn-total" onclick="calcTotal()">Порахувати загальний бал</button>
+      <div class="total-score-display" id="totalDisplay"></div>
+    </div>
+
+    <footer>
+      NMT-Food 2-h/w · Food vocabulary &amp; collocations<br>
+      Максимум: <strong>30 балів</strong>
+    </footer>
+  </div>
+
+  <script>
+    const answers = {
+      a: {0:'A',1:'C',2:'D',3:'A',4:'B',5:'C',6:'C',7:'D',8:'B'},
+      b: {1:'raw',2:'sparkling',3:'wholemeal',4:'bitter',5:'tinned',6:'unripe'},
+      c: {1:'human consumption',2:'tourist industry',3:'fattening food',4:'vegetarian diet',5:'ground pepper'},
+      d: {1:'chilli peppers',2:'cooked',3:'fatty',4:'radishes',5:'home-made',6:'bitter',7:'unripe',8:'spinach',9:'crunchy',10:'beetroot'}
+    };
+    const lastScores = {e1:null,e2:null,e3:null,e4:null};
+
+    function showFb(id,c,t){
+      const fb=document.getElementById(id);
+      fb.classList.add('show');
+      if(c===t){fb.className='feedback show success';fb.innerHTML='✅ Чудово! '+c+' / '+t;}
+      else{fb.className='feedback show error';fb.innerHTML='Результат: <span class="score">'+c+' / '+t+'</span>. Перевірте червоні поля.';}
+    }
+    function clearTotal(){document.getElementById('totalDisplay').className='total-score-display';document.getElementById('totalDisplay').innerHTML='';}
+
+    function checkRadio(prefix, ans, total, fbId, key){
+      let c=0;
+      for(const[k,v] of Object.entries(ans)){
+        const radios=document.querySelectorAll('input[name="'+prefix+k+'"]');
+        const labels=document.querySelectorAll('.q-block[data-q="'+prefix+k+'"] label');
+        labels.forEach(function(l){l.classList.remove('correct','wrong');});
+        let sel=null;
+        radios.forEach(function(r){if(r.checked) sel=r.value;});
+        if(sel===v){c++;labels.forEach(function(l){if(l.querySelector('input').value===sel) l.classList.add('correct');});}
+        else if(sel){labels.forEach(function(l){if(l.querySelector('input').value===sel) l.classList.add('wrong');});}
+      }
+      lastScores[key]={correct:c,total:total};
+      showFb(fbId,c,total);
+    }
+    function resetRadio(prefix, keys, fbId, key){
+      keys.forEach(function(k){
+        document.querySelectorAll('input[name="'+prefix+k+'"]').forEach(function(r){r.checked=false;});
+        document.querySelectorAll('.q-block[data-q="'+prefix+k+'"] label').forEach(function(l){l.classList.remove('correct','wrong');});
+      });
+      document.getElementById(fbId).className='feedback';lastScores[key]=null;clearTotal();
+    }
+
+    function checkSel(prefix, ans, total, fbId, key){
+      let c=0;
+      for(const[k,v] of Object.entries(ans)){
+        const el=document.getElementById(prefix+k);
+        if(!el) continue;
+        el.classList.remove('correct','wrong');
+        if(el.value===v){el.classList.add('correct');c++;}
+        else if(el.value) el.classList.add('wrong');
+      }
+      lastScores[key]={correct:c,total:total};
+      showFb(fbId,c,total);
+    }
+    function resetSel(prefix, keys, fbId, key){
+      keys.forEach(function(k){const el=document.getElementById(prefix+k);if(el){el.value='';el.classList.remove('correct','wrong');}});
+      document.getElementById(fbId).className='feedback';lastScores[key]=null;clearTotal();
+    }
+
+    function calcTotal(){
+      if(!lastScores.e1) checkRadio('a',answers.a,9,'fb1','e1');
+      if(!lastScores.e2) checkSel('b',answers.b,6,'fb2','e2');
+      if(!lastScores.e3) checkSel('c',answers.c,5,'fb3','e3');
+      if(!lastScores.e4) checkSel('d',answers.d,10,'fb4','e4');
+      var s1=lastScores.e1.correct,s2=lastScores.e2.correct,s3=lastScores.e3.correct,s4=lastScores.e4.correct;
+      var total=s1+s2+s3+s4, max=30, pct=Math.round((total/max)*100);
+      var display=document.getElementById('totalDisplay');
+      var cls,msg;
+      if(pct>=80){cls='good';msg='Відмінно! 🎉';}
+      else if(pct>=50){cls='mid';msg='Добре, є над чим попрацювати.';}
+      else{cls='bad';msg='Потрібно повторити матеріал.';}
+      display.className='total-score-display show '+cls;
+      display.innerHTML='<div>'+msg+'</div><div class="big-score">'+total+' / '+max+'</div><div>'+pct+'%</div><div class="breakdown"><div><span>1. Food diary A–D</span><span>'+s1+' / 9</span></div><div><span>2. Complete the adjectives</span><span>'+s2+' / 6</span></div><div><span>3. Phrases from the box</span><span>'+s3+' / 5</span></div><div><span>4. Choose the correct words</span><span>'+s4+' / 10</span></div></div>';
+    }
+  </script>
+</body>
+</html>

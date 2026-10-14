@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NMT-Food 3-h/w</title>
+  <style>
+    :root {
+      --primary: #6a1b9a;
+      --primary-dark: #4a148c;
+      --success: #2e7d32;
+      --error: #c62828;
+      --bg: #f3e5f5;
+      --card: #ffffff;
+      --border: #ce93d8;
+      --text: #1a1a2e;
+      --muted: #6a1b9a;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; padding: 20px; }
+    .container { max-width: 940px; margin: 0 auto; }
+    header {
+      background: linear-gradient(135deg, #6a1b9a, #4a148c);
+      color: white; padding: 28px 32px; border-radius: 16px; margin-bottom: 28px;
+      box-shadow: 0 8px 24px rgba(106,27,154,0.3);
+    }
+    header h1 { font-size: 1.4rem; font-weight: 700; margin-bottom: 6px; }
+    header p { opacity: 0.95; font-size: 0.95rem; }
+    .badge { display: inline-block; background: rgba(255,255,255,0.25); padding: 4px 12px; border-radius: 20px; font-size: 0.85rem; margin-bottom: 10px; }
+    .exercise {
+      background: var(--card); border-radius: 14px; padding: 28px; margin-bottom: 24px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.06); border: 1px solid var(--border);
+    }
+    .exercise h2 {
+      font-size: 1.1rem; color: var(--primary-dark); margin-bottom: 8px;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .exercise h2 .num {
+      background: var(--primary); color: white; width: 32px; height: 32px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center; font-size: 0.95rem; flex-shrink: 0;
+    }
+    .instruction { color: var(--muted); font-size: 0.95rem; margin-bottom: 16px; }
+    .word-box { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
+    .word-tag {
+      background: #f3e5f5; color: var(--primary-dark); padding: 5px 12px; border-radius: 20px;
+      font-size: 0.88rem; font-weight: 500; border: 1px solid #ce93d8;
+    }
+    .sentence { margin-bottom: 12px; font-size: 0.98rem; line-height: 1.7; }
+    select {
+      font-family: inherit; font-size: 0.9rem; padding: 5px 8px;
+      border: 2px solid #ce93d8; border-radius: 8px; background: white; min-width: 120px;
+    }
+    select:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(106,27,154,0.15); }
+    select.correct { border-color: var(--success); background: #e8f5e9; }
+    select.wrong { border-color: var(--error); background: #ffebee; }
+    .btn-row { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 18px; }
+    button {
+      font-family: inherit; font-size: 0.95rem; font-weight: 600; padding: 10px 22px;
+      border: none; border-radius: 10px; cursor: pointer;
+    }
+    .btn-check { background: var(--primary); color: white; box-shadow: 0 4px 12px rgba(106,27,154,0.3); }
+    .btn-check:hover { background: var(--primary-dark); }
+    .btn-reset { background: #e1bee7; color: var(--muted); }
+    .btn-reset:hover { background: #ce93d8; }
+    .btn-total {
+      background: linear-gradient(135deg, #2e7d32, #1b5e20); color: white;
+      font-size: 1.05rem; padding: 14px 28px; box-shadow: 0 4px 16px rgba(46,125,50,0.35);
+    }
+    .feedback { margin-top: 14px; padding: 12px 16px; border-radius: 10px; font-weight: 500; display: none; }
+    .feedback.show { display: block; }
+    .feedback.success { background: #e8f5e9; color: var(--success); border: 1px solid #a5d6a7; }
+    .feedback.error { background: #ffebee; color: var(--error); border: 1px solid #ef9a9a; }
+    .score { font-size: 1.1rem; font-weight: 700; }
+    .total-block {
+      background: var(--card); border-radius: 14px; padding: 32px; margin-bottom: 24px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.06); border: 2px solid var(--primary); text-align: center;
+    }
+    .total-block h2 { font-size: 1.3rem; color: var(--primary-dark); margin-bottom: 8px; }
+    .total-block .hint { color: var(--muted); font-size: 0.95rem; margin-bottom: 20px; }
+    .total-score-display { display: none; margin-top: 20px; padding: 24px; border-radius: 12px; font-size: 1.15rem; }
+    .total-score-display.show { display: block; }
+    .total-score-display.good { background: #e8f5e9; border: 2px solid #a5d6a7; color: var(--success); }
+    .total-score-display.mid { background: #fff8e1; border: 2px solid #ffe082; color: #f57f17; }
+    .total-score-display.bad { background: #ffebee; border: 2px solid #ef9a9a; color: var(--error); }
+    .big-score { font-size: 2.4rem; font-weight: 800; margin: 8px 0 4px; }
+    .breakdown { margin-top: 16px; font-size: 0.95rem; text-align: left; max-width: 440px; margin-left: auto; margin-right: auto; }
+    .breakdown div { display: flex; justify-content: space-between; padding: 4px 0; border-bottom: 1px dashed rgba(0,0,0,0.1); }
+    footer { text-align: center; color: var(--muted); font-size: 0.85rem; margin-top: 10px; padding-bottom: 30px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="badge">NMT-Food 3-h/w</div>
+      <h1>Food · Restaurant · Kitchen · Taste</h1>
+      <p>Vocabulary · collocations · kitchen tools · підсумок у кінці</p>
+    </header>
+
+    <!-- EX 1 Restaurant gap fill -->
+    <div class="exercise" id="ex1">
+      <h2><span class="num">1</span> Restaurant review – complete the gaps</h2>
+      <p class="instruction">Оберіть слова з рамки. <strong>(11 балів)</strong></p>
+      <div class="word-box">
+        <span class="word-tag">order</span><span class="word-tag">bill</span><span class="word-tag">chef</span>
+        <span class="word-tag">service</span><span class="word-tag">tasteless</span><span class="word-tag">included</span>
+        <span class="word-tag">book</span><span class="word-tag">dishes</span><span class="word-tag">tip</span>
+        <span class="word-tag">review</span><span class="word-tag">list</span>
+      </div>
+      <div class="sentence">A great new restaurant has just opened… It’s run by a celebrity
+        <select id="a1"><option value="">—</option><option value="chef">chef</option><option value="service">service</option><option value="bill">bill</option><option value="order">order</option></select>
+        and the food is delicious.
+      </div>
+      <div class="sentence">There was a
+        <select id="a2"><option value="">—</option><option value="review">review</option><option value="list">list</option><option value="tip">tip</option><option value="bill">bill</option></select>
+        online which said the food was
+        <select id="a3"><option value="">—</option><option value="tasteless">tasteless</option><option value="included">included</option><option value="delicious">delicious</option><option value="service">service</option></select>,
+        but I completely disagree.
+      </div>
+      <div class="sentence">It is so popular that it’s difficult to
+        <select id="a4"><option value="">—</option><option value="book">book</option><option value="order">order</option><option value="tip">tip</option><option value="list">list</option></select>
+        a table.
+      </div>
+      <div class="sentence">The menu is first class with lots of different
+        <select id="a5"><option value="">—</option><option value="dishes">dishes</option><option value="list">list</option><option value="order">order</option><option value="service">service</option></select>
+        and an excellent wine
+        <select id="a6"><option value="">—</option><option value="list">list</option><option value="bill">bill</option><option value="tip">tip</option><option value="review">review</option></select>.
+      </div>
+      <div class="sentence">The
+        <select id="a7"><option value="">—</option><option value="service">service</option><option value="chef">chef</option><option value="bill">bill</option><option value="order">order</option></select>
+        is excellent too.
+      </div>
+      <div class="sentence">The waiter appeared immediately to take our
+        <select id="a8"><option value="">—</option><option value="order">order</option><option value="bill">bill</option><option value="tip">tip</option><option value="list">list</option></select>
+        (we left a big
+        <select id="a9"><option value="">—</option><option value="tip">tip</option><option value="bill">bill</option><option value="order">order</option><option value="review">review</option></select>
+        as it wasn’t
+        <select id="a10"><option value="">—</option><option value="included">included</option><option value="tasteless">tasteless</option><option value="booked">booked</option><option value="served">served</option></select>),
+        and the
+        <select id="a11"><option value="">—</option><option value="bill">bill</option><option value="tip">tip</option><option value="order">order</option><option value="service">service</option></select>
+        wasn’t too bad!
+      </div>
+      <div class="btn-row">
+        <button class="btn-check" onclick="checkSel('a', answers.a, 11, 'fb1', 'e1')">Перевірити</button>
+        <button class="btn-reset" onclick="resetSel('a', [1,2,3,4,5,6,7,8,9,10,11], 'fb1', 'e1')">Скинути</button>
+      </div>
+      <div class="feedback" id="fb1"></div>
+    </div>
+
+    <!-- EX 2 Choose correct words -->
+    <div class="exercise" id="ex2">
+      <h2><span class="num">2</span> Choose the correct words</h2>
+      <p class="instruction">Оберіть правильне слово. <strong>(6 балів)</strong></p>
+      <div class="sentence">1. I could never eat a
+        <select id="b1"><option value="">—</option><option value="full">full</option><option value="complete">complete</option></select>
+        English breakfast.
+      </div>
+      <div class="sentence">2. We usually have several
+        <select id="b2"><option value="">—</option><option value="ready">ready</option><option value="immediate">immediate</option></select>
+        meals during the week.
+      </div>
+      <div class="sentence">3. I try not to eat too much
+        <select id="b3"><option value="">—</option><option value="junk">junk</option><option value="rubbish">rubbish</option></select>
+        food because I know it’s bad for my health.
+      </div>
+      <div class="sentence">4. I think I have a well-balanced
+        <select id="b4"><option value="">—</option><option value="diet">diet</option><option value="menu">menu</option></select>
+        and eat loads of fruit and vegetables.
+      </div>
+      <div class="sentence">5. I’ve been on a couple of
+        <select id="b5"><option value="">—</option><option value="crash">crash</option><option value="speed">speed</option></select>
+        diets but they don’t work very well.
+      </div>
+      <div class="sentence">6. I like
+        <select id="b6"><option value="">—</option><option value="self-service">self-service</option><option value="do-it-yourself">do-it-yourself</option></select>
+        restaurants and cafés.
+      </div>
+      <div class="btn-row">
+        <button class="btn-check" onclick="checkSel('b', answers.b, 6, 'fb2', 'e2')">Перевірити</button>
+        <button class="btn-reset" onclick="resetSel('b', [1,2,3,4,5,6], 'fb2', 'e2')">Скинути</button>
+      </div>
+      <div class="feedback" id="fb2"></div>
+    </div>
+
+    <!-- EX 3 Kitchen tools -->
+    <div class="exercise" id="ex3">
+      <h2><span class="num">3</span> Kitchen tools – match</h2>
+      <p class="instruction">Оберіть правильний інструмент. <strong>(8 балів)</strong></p>
+      <div class="word-box">
+        <span class="word-tag">tin opener</span><span class="word-tag">corkscrew</span><span class="word-tag">sieve</span>
+        <span class="word-tag">wooden spoon</span><span class="word-tag">chopping board</span>
+        <span class="word-tag">cutlery</span><span class="word-tag">crockery</span><span class="word-tag">ladle</span>
+      </div>
+      <div class="sentence">1. a collective noun for plates, cups, bowls, etc.:
+        <select id="c1"><option value="">—</option><option value="crockery">crockery</option><option value="cutlery">cutlery</option><option value="sieve">sieve</option><option value="ladle">ladle</option></select>
+      </div>
+      <div class="sentence">2. we use this to take corks out of wine bottles:
+        <select id="c2"><option value="">—</option><option value="corkscrew">corkscrew</option><option value="tin opener">tin opener</option><option value="ladle">ladle</option><option value="sieve">sieve</option></select>
+      </div>
+      <div class="sentence">3. we use this to drain boiled potatoes and pasta:
+        <select id="c3"><option value="">—</option><option value="sieve">sieve</option><option value="ladle">ladle</option><option value="corkscrew">corkscrew</option><option value="wooden spoon">wooden spoon</option></select>
+      </div>
+      <div class="sentence">4. we use this to serve a helping of soup:
+        <select id="c4"><option value="">—</option><option value="ladle">ladle</option><option value="sieve">sieve</option><option value="wooden spoon">wooden spoon</option><option value="cutlery">cutlery</option></select>
+      </div>
+      <div class="sentence">5. we use this to stir hot sauces:
+        <select id="c5"><option value="">—</option><option value="wooden spoon">wooden spoon</option><option value="ladle">ladle</option><option value="sieve">sieve</option><option value="corkscrew">corkscrew</option></select>
+      </div>
+      <div class="sentence">6. a collective noun for knives, forks, spoons, etc.:
+        <select id="c6"><option value="">—</option><option value="cutlery">cutlery</option><option value="crockery">crockery</option><option value="ladle">ladle</option><option value="sieve">sieve</option></select>
+      </div>
+      <div class="sentence">7. we use this to cut vegetables on:
+        <select id="c7"><option value="">—</option><option value="chopping board">chopping board</option><option value="wooden spoon">wooden spoon</option><option value="sieve">sieve</option><option value="ladle">ladle</option></select>
+      </div>
+      <div class="sentence">8. we use this to open tins / cans:
+        <select id="c8"><option value="">—</option><option value="tin opener">tin opener</option><option value="corkscrew">corkscrew</option><option value="sieve">sieve</option><option value="ladle">ladle</option></select>
+      </div>
+      <div class="btn-row">
+        <button class="btn-check" onclick="checkSel('c', answers.c, 8, 'fb3', 'e3')">Перевірити</button>
+        <button class="btn-reset" onclick="resetSel('c', [1,2,3,4,5,6,7,8], 'fb3', 'e3')">Скинути</button>
+      </div>
+      <div class="feedback" id="fb3"></div>
+    </div>
+
+    <!-- EX 4 Health tips verbs -->
+    <div class="exercise" id="ex4">
+      <h2><span class="num">4</span> Health tips – complete with verbs</h2>
+      <p class="instruction">Оберіть дієслова з рамки. <strong>(8 балів)</strong></p>
+      <div class="word-box">
+        <span class="word-tag">sip</span><span class="word-tag">gulp</span><span class="word-tag">chew</span>
+        <span class="word-tag">spread</span><span class="word-tag">rinse</span><span class="word-tag">slice</span>
+        <span class="word-tag">swallow</span><span class="word-tag">squeeze</span>
+      </div>
+      <div class="sentence">1. Try to
+        <select id="d1"><option value="">—</option><option value="chew">chew</option><option value="swallow">swallow</option><option value="sip">sip</option><option value="slice">slice</option></select>
+        your food thoroughly before you
+        <select id="d2"><option value="">—</option><option value="swallow">swallow</option><option value="chew">chew</option><option value="gulp">gulp</option><option value="sip">sip</option></select>
+        it.
+      </div>
+      <div class="sentence">2.
+        <select id="d3"><option value="">—</option><option value="Squeeze">Squeeze</option><option value="Spread">Spread</option><option value="Slice">Slice</option><option value="Rinse">Rinse</option></select>
+        some lemon juice onto your salad instead of adding dressing.
+      </div>
+      <div class="sentence">3. Always
+        <select id="d4"><option value="">—</option><option value="rinse">rinse</option><option value="slice">slice</option><option value="chew">chew</option><option value="spread">spread</option></select>
+        fruit before you eat it.
+      </div>
+      <div class="sentence">4.
+        <select id="d5"><option value="">—</option><option value="Spread">Spread</option><option value="Squeeze">Squeeze</option><option value="Slice">Slice</option><option value="Chew">Chew</option></select>
+        low-fat margarine on your bread instead of butter.
+      </div>
+      <div class="sentence">5.
+        <select id="d6"><option value="">—</option><option value="Slice">Slice</option><option value="Spread">Spread</option><option value="Rinse">Rinse</option><option value="Chew">Chew</option></select>
+        bread thinly and you won’t eat so much.
+      </div>
+      <div class="sentence">6. You should
+        <select id="d7"><option value="">—</option><option value="sip">sip</option><option value="gulp">gulp</option><option value="chew">chew</option><option value="swallow">swallow</option></select>
+        your drinks, not
+        <select id="d8"><option value="">—</option><option value="gulp">gulp</option><option value="sip">sip</option><option value="chew">chew</option><option value="swallow">swallow</option></select>
+        them.
+      </div>
+      <div class="btn-row">
+        <button class="btn-check" onclick="checkSel('d', answers.d, 8, 'fb4', 'e4')">Перевірити</button>
+        <button class="btn-reset" onclick="resetSel('d', [1,2,3,4,5,6,7,8], 'fb4', 'e4')">Скинути</button>
+      </div>
+      <div class="feedback" id="fb4"></div>
+    </div>
+
+    <!-- EX 5 Taste adjectives -->
+    <div class="exercise" id="ex5">
+      <h2><span class="num">5</span> Food reviews – taste adjectives</h2>
+      <p class="instruction">Оберіть прикметники з рамки. <strong>(10 балів)</strong></p>
+      <div class="word-box">
+        <span class="word-tag">sweet</span><span class="word-tag">strong</span><span class="word-tag">delicious</span>
+        <span class="word-tag">spicy</span><span class="word-tag">hot</span><span class="word-tag">undercooked</span>
+        <span class="word-tag">salty</span><span class="word-tag">weak</span><span class="word-tag">mild</span>
+      </div>
+      <div class="sentence">1. I can’t say a bad word about the main course; on the contrary, it was
+        <select id="e1"><option value="">—</option><option value="delicious">delicious</option><option value="sweet">sweet</option><option value="strong">strong</option><option value="mild">mild</option></select>.
+      </div>
+      <div class="sentence">2. I had the cheesecake for dessert which was very
+        <select id="e2"><option value="">—</option><option value="sweet">sweet</option><option value="salty">salty</option><option value="spicy">spicy</option><option value="hot">hot</option></select>.
+        Less sugar next time!
+      </div>
+      <div class="sentence">3. The chicken curry was excellent. I like curries, but not too
+        <select id="e3"><option value="">—</option><option value="spicy">spicy</option><option value="sweet">sweet</option><option value="weak">weak</option><option value="salty">salty</option></select>.
+        This curry was
+        <select id="e4"><option value="">—</option><option value="mild">mild</option><option value="hot">hot</option><option value="strong">strong</option><option value="weak">weak</option></select>
+        and I loved it. My dad’s lamb curry was too
+        <select id="e5"><option value="">—</option><option value="hot">hot</option><option value="mild">mild</option><option value="sweet">sweet</option><option value="weak">weak</option></select>,
+        however…
+      </div>
+      <div class="sentence">4. We had coffee after the meal and my coffee was very
+        <select id="e6"><option value="">—</option><option value="strong">strong</option><option value="weak">weak</option><option value="mild">mild</option><option value="sweet">sweet</option></select>
+        and kept me awake for ages! My mum’s was quite
+        <select id="e7"><option value="">—</option><option value="weak">weak</option><option value="strong">strong</option><option value="hot">hot</option><option value="salty">salty</option></select>
+        with too much milk…
+      </div>
+      <div class="sentence">5. I had the roast chicken, which, unfortunately, was a bit
+        <select id="e8"><option value="">—</option><option value="undercooked">undercooked</option><option value="delicious">delicious</option><option value="salty">salty</option><option value="mild">mild</option></select>
+        and red inside… I liked the vegetables, although my mum thought they were slightly too
+        <select id="e9"><option value="">—</option><option value="salty">salty</option><option value="sweet">sweet</option><option value="mild">mild</option><option value="weak">weak</option></select>.
+      </div>
+      <div class="btn-row">
+        <button class="btn-check" onclick="checkSel('e', answers.e, 9, 'fb5', 'e5')">Перевірити</button>
+        <button class="btn-reset" onclick="resetSel('e', [1,2,3,4,5,6,7,8,9], 'fb5', 'e5')">Скинути</button>
+      </div>
+      <div class="feedback" id="fb5"></div>
+    </div>
+
+    <!-- TOTAL -->
+    <div class="total-block">
+      <h2>📝 Підсумок домашнього завдання</h2>
+      <p class="hint">Спочатку перевірте кожну вправу, потім натисніть кнопку нижче.</p>
+      <button class="btn-total" onclick="calcTotal()">Порахувати загальний бал</button>
+      <div class="total-score-display" id="totalDisplay"></div>
+    </div>
+
+    <footer>
+      NMT-Food 3-h/w · Restaurant · Kitchen · Taste<br>
+      Максимум: <strong>42 бали</strong>
+    </footer>
+  </div>
+
+  <script>
+    const answers = {
+      a: {1:'chef',2:'review',3:'tasteless',4:'book',5:'dishes',6:'list',7:'service',8:'order',9:'tip',10:'included',11:'bill'},
+      b: {1:'full',2:'ready',3:'junk',4:'diet',5:'crash',6:'self-service'},
+      c: {1:'crockery',2:'corkscrew',3:'sieve',4:'ladle',5:'wooden spoon',6:'cutlery',7:'chopping board',8:'tin opener'},
+      d: {1:'chew',2:'swallow',3:'Squeeze',4:'rinse',5:'Spread',6:'Slice',7:'sip',8:'gulp'},
+      e: {1:'delicious',2:'sweet',3:'spicy',4:'mild',5:'hot',6:'strong',7:'weak',8:'undercooked',9:'salty'}
+    };
+    const lastScores = {e1:null,e2:null,e3:null,e4:null,e5:null};
+
+    function showFb(id,c,t){
+      const fb=document.getElementById(id);
+      fb.classList.add('show');
+      if(c===t){fb.className='feedback show success';fb.innerHTML='✅ Чудово! '+c+' / '+t;}
+      else{fb.className='feedback show error';fb.innerHTML='Результат: <span class="score">'+c+' / '+t+'</span>. Перевірте червоні поля.';}
+    }
+    function clearTotal(){document.getElementById('totalDisplay').className='total-score-display';document.getElementById('totalDisplay').innerHTML='';}
+    function checkSel(prefix, ans, total, fbId, key){
+      let c=0;
+      for(const[k,v] of Object.entries(ans)){
+        const el=document.getElementById(prefix+k);
+        if(!el) continue;
+        el.classList.remove('correct','wrong');
+        if(el.value===v){el.classList.add('correct');c++;}
+        else if(el.value) el.classList.add('wrong');
+      }
+      lastScores[key]={correct:c,total:total};
+      showFb(fbId,c,total);
+    }
+    function resetSel(prefix, keys, fbId, key){
+      keys.forEach(function(k){const el=document.getElementById(prefix+k);if(el){el.value='';el.classList.remove('correct','wrong');}});
+      document.getElementById(fbId).className='feedback';lastScores[key]=null;clearTotal();
+    }
+
+    function calcTotal(){
+      if(!lastScores.e1) checkSel('a',answers.a,11,'fb1','e1');
+      if(!lastScores.e2) checkSel('b',answers.b,6,'fb2','e2');
+      if(!lastScores.e3) checkSel('c',answers.c,8,'fb3','e3');
+      if(!lastScores.e4) checkSel('d',answers.d,8,'fb4','e4');
+      if(!lastScores.e5) checkSel('e',answers.e,9,'fb5','e5');
+      var s1=lastScores.e1.correct,s2=lastScores.e2.correct,s3=lastScores.e3.correct;
+      var s4=lastScores.e4.correct,s5=lastScores.e5.correct;
+      var total=s1+s2+s3+s4+s5, max=42, pct=Math.round((total/max)*100);
+      var display=document.getElementById('totalDisplay');
+      var cls,msg;
+      if(pct>=80){cls='good';msg='Відмінно! 🎉';}
+      else if(pct>=50){cls='mid';msg='Добре, є над чим попрацювати.';}
+      else{cls='bad';msg='Потрібно повторити матеріал.';}
+      display.className='total-score-display show '+cls;
+      display.innerHTML='<div>'+msg+'</div><div class="big-score">'+total+' / '+max+'</div><div>'+pct+'%</div><div class="breakdown"><div><span>1. Restaurant review</span><span>'+s1+' / 11</span></div><div><span>2. Choose the correct words</span><span>'+s2+' / 6</span></div><div><span>3. Kitchen tools</span><span>'+s3+' / 8</span></div><div><span>4. Health tips verbs</span><span>'+s4+' / 8</span></div><div><span>5. Taste adjectives</span><span>'+s5+' / 9</span></div></div>';
+    }
+  </script>
+</body>
+</html>

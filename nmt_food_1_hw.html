@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NMT-Food 1-h/w</title>
+  <style>
+    :root {
+      --primary: #e65100;
+      --primary-dark: #bf360c;
+      --success: #2e7d32;
+      --error: #c62828;
+      --bg: #fff3e0;
+      --card: #ffffff;
+      --border: #ffcc80;
+      --text: #1a1a2e;
+      --muted: #6d4c41;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; padding: 20px; }
+    .container { max-width: 940px; margin: 0 auto; }
+    header {
+      background: linear-gradient(135deg, #e65100, #bf360c);
+      color: white; padding: 28px 32px; border-radius: 16px; margin-bottom: 28px;
+      box-shadow: 0 8px 24px rgba(230,81,0,0.3);
+    }
+    header h1 { font-size: 1.4rem; font-weight: 700; margin-bottom: 6px; }
+    header p { opacity: 0.95; font-size: 0.95rem; }
+    .badge { display: inline-block; background: rgba(255,255,255,0.25); padding: 4px 12px; border-radius: 20px; font-size: 0.85rem; margin-bottom: 10px; }
+    .exercise {
+      background: var(--card); border-radius: 14px; padding: 28px; margin-bottom: 24px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.06); border: 1px solid var(--border);
+    }
+    .exercise h2 {
+      font-size: 1.1rem; color: var(--primary-dark); margin-bottom: 8px;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .exercise h2 .num {
+      background: var(--primary); color: white; width: 32px; height: 32px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center; font-size: 0.95rem; flex-shrink: 0;
+    }
+    .instruction { color: var(--muted); font-size: 0.95rem; margin-bottom: 16px; }
+    .word-box { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
+    .word-tag {
+      background: #fff3e0; color: var(--primary-dark); padding: 5px 12px; border-radius: 20px;
+      font-size: 0.88rem; font-weight: 500; border: 1px solid #ffcc80;
+    }
+    .sentence { margin-bottom: 12px; font-size: 0.98rem; line-height: 1.7; }
+    select {
+      font-family: inherit; font-size: 0.9rem; padding: 5px 8px;
+      border: 2px solid #ffcc80; border-radius: 8px; background: white; min-width: 110px;
+    }
+    select:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(230,81,0,0.15); }
+    select.correct { border-color: var(--success); background: #e8f5e9; }
+    select.wrong { border-color: var(--error); background: #ffebee; }
+    .btn-row { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 18px; }
+    button {
+      font-family: inherit; font-size: 0.95rem; font-weight: 600; padding: 10px 22px;
+      border: none; border-radius: 10px; cursor: pointer;
+    }
+    .btn-check { background: var(--primary); color: white; box-shadow: 0 4px 12px rgba(230,81,0,0.3); }
+    .btn-check:hover { background: var(--primary-dark); }
+    .btn-reset { background: #ffe0b2; color: var(--muted); }
+    .btn-reset:hover { background: #ffcc80; }
+    .btn-total {
+      background: linear-gradient(135deg, #2e7d32, #1b5e20); color: white;
+      font-size: 1.05rem; padding: 14px 28px; box-shadow: 0 4px 16px rgba(46,125,50,0.35);
+    }
+    .feedback { margin-top: 14px; padding: 12px 16px; border-radius: 10px; font-weight: 500; display: none; }
+    .feedback.show { display: block; }
+    .feedback.success { background: #e8f5e9; color: var(--success); border: 1px solid #a5d6a7; }
+    .feedback.error { background: #ffebee; color: var(--error); border: 1px solid #ef9a9a; }
+    .score { font-size: 1.1rem; font-weight: 700; }
+    .total-block {
+      background: var(--card); border-radius: 14px; padding: 32px; margin-bottom: 24px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.06); border: 2px solid var(--primary); text-align: center;
+    }
+    .total-block h2 { font-size: 1.3rem; color: var(--primary-dark); margin-bottom: 8px; }
+    .total-block .hint { color: var(--muted); font-size: 0.95rem; margin-bottom: 20px; }
+    .total-score-display { display: none; margin-top: 20px; padding: 24px; border-radius: 12px; font-size: 1.15rem; }
+    .total-score-display.show { display: block; }
+    .total-score-display.good { background: #e8f5e9; border: 2px solid #a5d6a7; color: var(--success); }
+    .total-score-display.mid { background: #fff8e1; border: 2px solid #ffe082; color: #f57f17; }
+    .total-score-display.bad { background: #ffebee; border: 2px solid #ef9a9a; color: var(--error); }
+    .big-score { font-size: 2.4rem; font-weight: 800; margin: 8px 0 4px; }
+    .breakdown { margin-top: 16px; font-size: 0.95rem; text-align: left; max-width: 460px; margin-left: auto; margin-right: auto; }
+    .breakdown div { display: flex; justify-content: space-between; padding: 4px 0; border-bottom: 1px dashed rgba(0,0,0,0.1); }
+    footer { text-align: center; color: var(--muted); font-size: 0.85rem; margin-top: 10px; padding-bottom: 30px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="badge">NMT-Food 1-h/w</div>
+      <h1>Food · Vocabulary &amp; Grammar</h1>
+      <p>Cuisine · cooking · restaurants · ingredients · підсумок у кінці</p>
+    </header>
+
+    <!-- EX 1 Passive the correct word -->
+    <div class="exercise" id="ex1">
+      <h2><span class="num">1</span> Circle the correct word</h2>
+      <p class="instruction">Оберіть правильне слово. <strong>(13 балів)</strong></p>
+      <div class="sentence">1. I particularly like Mexican and Indian
+        <select id="a1"><option value="">—</option><option value="cuisine">cuisine</option><option value="kitchen">kitchen</option></select>.
+      </div>
+      <div class="sentence">2.
+        <select id="a2"><option value="">—</option><option value="Frozen">Frozen</option><option value="Freezing">Freezing</option></select>
+        fish is just as tasty as fresh fish.
+      </div>
+      <div class="sentence">3. My mum’s the best
+        <select id="a3"><option value="">—</option><option value="cook">cook</option><option value="cooker">cooker</option></select>
+        in the world!
+      </div>
+      <div class="sentence">4. Once the
+        <select id="a4"><option value="">—</option><option value="kettle">kettle</option><option value="teapot">teapot</option></select>
+        has boiled, pour the boiling water over the jelly cubes.
+      </div>
+      <div class="sentence">5. Excuse me. Could we have the
+        <select id="a5"><option value="">—</option><option value="menu">menu</option><option value="catalogue">catalogue</option></select>, please?
+      </div>
+      <div class="sentence">6. Boil the eggs for three minutes in a saucepan on the
+        <select id="a6"><option value="">—</option><option value="hob">hob</option><option value="grill">grill</option><option value="oven">oven</option></select>.
+      </div>
+      <div class="sentence">7. Any meat that’s kept in the
+        <select id="a7"><option value="">—</option><option value="freezer">freezer</option><option value="fridge">fridge</option></select>
+        should be defrosted thoroughly before cooking.
+      </div>
+      <div class="sentence">8. Grandma’s having her new
+        <select id="a8"><option value="">—</option><option value="cooker">cooker</option><option value="chef">chef</option></select>
+        delivered next week.
+      </div>
+      <div class="sentence">9. Chilli con carne is one of my favourite
+        <select id="a9"><option value="">—</option><option value="dishes">dishes</option><option value="plates">plates</option><option value="bowls">bowls</option><option value="saucers">saucers</option></select>.
+      </div>
+      <div class="sentence">10. Are you going to get your suit dry-cleaned for the Carlton’s
+        <select id="a10"><option value="">—</option><option value="dinner">dinner</option><option value="lunch">lunch</option></select>
+        party tomorrow night?
+      </div>
+      <div class="sentence">11. My friend Sally’s a true
+        <select id="a11"><option value="">—</option><option value="vegan">vegan</option><option value="vegetarian">vegetarian</option><option value="vegetable">vegetable</option></select>,
+        so she doesn’t eat meat, fish or even any milk products.
+      </div>
+      <div class="sentence">12. Let’s get a Chinese
+        <select id="a12"><option value="">—</option><option value="takeaway">takeaway</option><option value="fast food">fast food</option></select>
+        tonight.
+      </div>
+      <div class="sentence">13.
+        <select id="a13"><option value="">—</option><option value="Fizzy">Fizzy</option><option value="Soft">Soft</option></select>
+        drinks are gassy because they’ve got carbon dioxide in them.
+      </div>
+      <div class="btn-row">
+        <button class="btn-check" onclick="checkSel('a', answers.a, 13, 'fb1', 'e1')">Перевірити</button>
+        <button class="btn-reset" onclick="resetSel('a', range(1,13), 'fb1', 'e1')">Скинути</button>
+      </div>
+      <div class="feedback" id="fb1"></div>
+    </div>
+
+    <!-- EX 2 Forum cooking verbs -->
+    <div class="exercise" id="ex2">
+      <h2><span class="num">2</span> Choose the correct cooking words</h2>
+      <p class="instruction">Оберіть правильне слово в інтернет-форумі. <strong>(12 балів)</strong></p>
+      <div class="sentence">1. I can’t even
+        <select id="b1"><option value="">—</option><option value="boil">boil</option><option value="bake">bake</option></select>
+        an egg.
+      </div>
+      <div class="sentence">2. I can
+        <select id="b2"><option value="">—</option><option value="peel">peel</option><option value="pile">pile</option></select>
+        the potatoes
+      </div>
+      <div class="sentence">3. and
+        <select id="b3"><option value="">—</option><option value="grate">grate</option><option value="cut">cut</option></select>
+        some cheese,
+      </div>
+      <div class="sentence">4. but as for
+        <select id="b4"><option value="">—</option><option value="baking">baking</option><option value="doing">doing</option></select>
+        cakes
+      </div>
+      <div class="sentence">5. or
+        <select id="b5"><option value="">—</option><option value="roasting">roasting</option><option value="baking">baking</option></select>
+        meat – no way.
+      </div>
+      <div class="sentence">6. I once tried
+        <select id="b6"><option value="">—</option><option value="following">following</option><option value="copying">copying</option></select>
+        a recipe
+      </div>
+      <div class="sentence">7. and
+        <select id="b7"><option value="">—</option><option value="burned">burned</option><option value="fired">fired</option></select>
+        the saucepan!
+      </div>
+      <div class="sentence">8. Take a frozen meal out of the freezer,
+        <select id="b8"><option value="">—</option><option value="cook">cook</option><option value="boil">boil</option></select>
+        it in the microwave
+      </div>
+      <div class="sentence">9. and then
+        <select id="b9"><option value="">—</option><option value="serve">serve</option><option value="place">place</option></select>
+        it on posh plates.
+      </div>
+      <div class="sentence">10.
+        <select id="b10"><option value="">—</option><option value="choose">choose</option><option value="prefer">prefer</option></select>
+        something from a takeaway menu,
+      </div>
+      <div class="sentence">11.
+        <select id="b11"><option value="">—</option><option value="order">order</option><option value="call">call</option></select>
+        it by phone
+      </div>
+      <div class="sentence">12. Just hope they don’t ask for the
+        <select id="b12"><option value="">—</option><option value="recipe">recipe</option><option value="receipt">receipt</option></select>!
+      </div>
+      <div class="btn-row">
+        <button class="btn-check" onclick="checkSel('b', answers.b, 12, 'fb2', 'e2')">Перевірити</button>
+        <button class="btn-reset" onclick="resetSel('b', range(1,12), 'fb2', 'e2')">Скинути</button>
+      </div>
+      <div class="feedback" id="fb2"></div>
+    </div>
+
+    <!-- EX 3 Match food adjectives -->
+    <div class="exercise" id="ex3">
+      <h2><span class="num">3</span> Match the adjectives to the food</h2>
+      <p class="instruction">Зіставте описи з продуктами. <strong>(11 балів)</strong></p>
+      <div class="sentence">1. ground / instant / powdered →
+        <select id="c1"><option value="">—</option><option value="C">C coffee</option><option value="A">A steak</option><option value="J">J cheese</option><option value="H">H ice cream</option></select>
+      </div>
+      <div class="sentence">2. sliced / crusty / wholemeal →
+        <select id="c2"><option value="">—</option><option value="E">E bread</option><option value="A">A steak</option><option value="B">B apple pie</option><option value="K">K burger</option></select>
+      </div>
+      <div class="sentence">3. soft / fizzy / still →
+        <select id="c3"><option value="">—</option><option value="F">F drink</option><option value="G">G wine</option><option value="C">C coffee</option><option value="H">H ice cream</option></select>
+      </div>
+      <div class="sentence">4. dry / medium dry / sweet →
+        <select id="c4"><option value="">—</option><option value="G">G wine</option><option value="F">F drink</option><option value="D">D dressing</option><option value="C">C coffee</option></select>
+      </div>
+      <div class="sentence">5. rare / medium / well-done →
+        <select id="c5"><option value="">—</option><option value="A">A steak</option><option value="K">K burger</option><option value="I">I eggs</option><option value="J">J cheese</option></select>
+      </div>
+      <div class="sentence">6. blue / full-fat / cream →
+        <select id="c6"><option value="">—</option><option value="J">J cheese</option><option value="H">H ice cream</option><option value="C">C coffee</option><option value="G">G wine</option></select>
+      </div>
+      <div class="sentence">7. home-made / shop-bought / microwavable →
+        <select id="c7"><option value="">—</option><option value="B">B apple pie</option><option value="K">K burger</option><option value="E">E bread</option><option value="A">A steak</option></select>
+      </div>
+      <div class="sentence">8. garlic / salad / French →
+        <select id="c8"><option value="">—</option><option value="D">D dressing</option><option value="E">E bread</option><option value="G">G wine</option><option value="F">F drink</option></select>
+      </div>
+      <div class="sentence">9. chicken / cheese / beef →
+        <select id="c9"><option value="">—</option><option value="K">K burger</option><option value="A">A steak</option><option value="J">J cheese</option><option value="I">I eggs</option></select>
+      </div>
+      <div class="sentence">10. scrambled / poached / boiled →
+        <select id="c10"><option value="">—</option><option value="I">I eggs</option><option value="J">J cheese</option><option value="A">A steak</option><option value="H">H ice cream</option></select>
+      </div>
+      <div class="sentence">11. vanilla / chocolate / Neapolitan →
+        <select id="c11"><option value="">—</option><option value="H">H ice cream</option><option value="B">B apple pie</option><option value="C">C coffee</option><option value="G">G wine</option></select>
+      </div>
+      <div class="btn-row">
+        <button class="btn-check" onclick="checkSel('c', answers.c, 11, 'fb3', 'e3')">Перевірити</button>
+        <button class="btn-reset" onclick="resetSel('c', range(1,11), 'fb3', 'e3')">Скинути</button>
+      </div>
+      <div class="feedback" id="fb3"></div>
+    </div>
+
+    <!-- EX 4 Food adjectives from box -->
+    <div class="exercise" id="ex4">
+      <h2><span class="num">4</span> Complete with words from the box</h2>
+      <p class="instruction">Оберіть правильне слово. <strong>(10 балів)</strong></p>
+      <div class="word-box">
+        <span class="word-tag">fresh</span><span class="word-tag">baked</span><span class="word-tag">frozen</span>
+        <span class="word-tag">tinned</span><span class="word-tag">dried</span><span class="word-tag">low-calorie</span>
+        <span class="word-tag">soft</span><span class="word-tag">sparkling</span><span class="word-tag">skimmed</span><span class="word-tag">stale</span>
+      </div>
+      <div class="sentence">1. Can you get me some
+        <select id="d1"><option value="">—</option><option value="frozen">frozen</option><option value="fresh">fresh</option><option value="tinned">tinned</option><option value="dried">dried</option></select>
+        peas from the freezer, please?
+      </div>
+      <div class="sentence">2. This bread’s a bit
+        <select id="d2"><option value="">—</option><option value="stale">stale</option><option value="fresh">fresh</option><option value="baked">baked</option><option value="soft">soft</option></select>
+        – don’t eat it.
+      </div>
+      <div class="sentence">3.
+        <select id="d3"><option value="">—</option><option value="Skimmed">Skimmed</option><option value="Fresh">Fresh</option><option value="Frozen">Frozen</option><option value="Soft">Soft</option></select>
+        milk is much better for you than full-fat.
+      </div>
+      <div class="sentence">4. When I was a child, I absolutely loved
+        <select id="d4"><option value="">—</option><option value="baked">baked</option><option value="tinned">tinned</option><option value="fresh">fresh</option><option value="frozen">frozen</option></select>
+        beans on toast.
+      </div>
+      <div class="sentence">5. We usually keep some
+        <select id="d5"><option value="">—</option><option value="tinned">tinned</option><option value="fresh">fresh</option><option value="frozen">frozen</option><option value="dried">dried</option></select>
+        peaches in the cupboard.
+      </div>
+      <div class="sentence">6. On a hot day like this, a glass of
+        <select id="d6"><option value="">—</option><option value="sparkling">sparkling</option><option value="soft">soft</option><option value="stale">stale</option><option value="skimmed">skimmed</option></select>
+        water is very refreshing.
+      </div>
+      <div class="sentence">7. I’m watching my weight, so I’ll have some
+        <select id="d7"><option value="">—</option><option value="low-calorie">low-calorie</option><option value="soft">soft</option><option value="sparkling">sparkling</option><option value="fresh">fresh</option></select>
+        lemonade, please.
+      </div>
+      <div class="sentence">8. My cousin adds some
+        <select id="d8"><option value="">—</option><option value="dried">dried</option><option value="fresh">fresh</option><option value="frozen">frozen</option><option value="tinned">tinned</option></select>
+        herbs from a packet to the stew.
+      </div>
+      <div class="sentence">9. My parents never drink wine or beer, only
+        <select id="d9"><option value="">—</option><option value="soft">soft</option><option value="sparkling">sparkling</option><option value="skimmed">skimmed</option><option value="fresh">fresh</option></select>
+        drinks.
+      </div>
+      <div class="sentence">10. My mum regularly buys
+        <select id="d10"><option value="">—</option><option value="fresh">fresh</option><option value="frozen">frozen</option><option value="tinned">tinned</option><option value="dried">dried</option></select>
+        vegetables from the local market.
+      </div>
+      <div class="btn-row">
+        <button class="btn-check" onclick="checkSel('d', answers.d, 10, 'fb4', 'e4')">Перевірити</button>
+        <button class="btn-reset" onclick="resetSel('d', range(1,10), 'fb4', 'e4')">Скинути</button>
+      </div>
+      <div class="feedback" id="fb4"></div>
+    </div>
+
+    <!-- EX 5 Recipe words -->
+    <div class="exercise" id="ex5">
+      <h2><span class="num">5</span> Complete the recipe</h2>
+      <p class="instruction">Оберіть слова з рамки. <strong>(10 балів)</strong></p>
+      <div class="word-box">
+        <span class="word-tag">seasonings</span><span class="word-tag">oven</span><span class="word-tag">appetite</span>
+        <span class="word-tag">chop</span><span class="word-tag">stir</span><span class="word-tag">sprinkle</span>
+        <span class="word-tag">ingredients</span><span class="word-tag">oil</span><span class="word-tag">heat</span><span class="word-tag">fry</span>
+      </div>
+      <div class="sentence">I’m attaching a really easy recipe for a lovely meal with basic
+        <select id="e1"><option value="">—</option><option value="ingredients">ingredients</option><option value="seasonings">seasonings</option><option value="oil">oil</option><option value="heat">heat</option></select>.
+      </div>
+      <div class="sentence">Just
+        <select id="e2"><option value="">—</option><option value="chop">chop</option><option value="stir">stir</option><option value="fry">fry</option><option value="sprinkle">sprinkle</option></select>
+        all the vegetables and
+        <select id="e3"><option value="">—</option><option value="fry">fry</option><option value="chop">chop</option><option value="stir">stir</option><option value="heat">heat</option></select>
+        the meat in some hot
+        <select id="e4"><option value="">—</option><option value="oil">oil</option><option value="heat">heat</option><option value="oven">oven</option><option value="ingredients">ingredients</option></select>
+        for a few minutes,
+      </div>
+      <div class="sentence">then put everything into a big pot and
+        <select id="e5"><option value="">—</option><option value="sprinkle">sprinkle</option><option value="stir">stir</option><option value="chop">chop</option><option value="fry">fry</option></select>
+        on some herbs and other
+        <select id="e6"><option value="">—</option><option value="seasonings">seasonings</option><option value="ingredients">ingredients</option><option value="oil">oil</option><option value="heat">heat</option></select>.
+      </div>
+      <div class="sentence">Add some tinned tomatoes and red wine. Cook on a low
+        <select id="e7"><option value="">—</option><option value="heat">heat</option><option value="oven">oven</option><option value="oil">oil</option><option value="stir">stir</option></select>
+        in the
+        <select id="e8"><option value="">—</option><option value="oven">oven</option><option value="heat">heat</option><option value="oil">oil</option><option value="fry">fry</option></select>
+        for two and a half hours.
+      </div>
+      <div class="sentence">
+        <select id="e9"><option value="">—</option><option value="Stir">Stir</option><option value="Chop">Chop</option><option value="Fry">Fry</option><option value="Sprinkle">Sprinkle</option></select>
+        every fifteen minutes. Serve with a salad.
+      </div>
+      <div class="sentence">If I had to wait two and a half hours, I’d lose my
+        <select id="e10"><option value="">—</option><option value="appetite">appetite</option><option value="ingredients">ingredients</option><option value="seasonings">seasonings</option><option value="heat">heat</option></select>!
+      </div>
+      <div class="btn-row">
+        <button class="btn-check" onclick="checkSel('e', answers.e, 10, 'fb5', 'e5')">Перевірити</button>
+        <button class="btn-reset" onclick="resetSel('e', range(1,10), 'fb5', 'e5')">Скинути</button>
+      </div>
+      <div class="feedback" id="fb5"></div>
+    </div>
+
+    <!-- EX 6 European Diet passive -->
+    <div class="exercise" id="ex6">
+      <h2><span class="num">6</span> The European Diet – complete the gaps</h2>
+      <p class="instruction">Оберіть правильну форму дієслова (passive / past). <strong>(13 балів)</strong></p>
+      <div class="sentence">It’s hard for us to imagine what
+        <select id="f1"><option value="">—</option><option value="was">was</option><option value="is">is</option><option value="were">were</option><option value="had">had</option></select>
+        included in the European diet before America
+        <select id="f2"><option value="">—</option><option value="was">was</option><option value="were">were</option><option value="had">had</option><option value="is">is</option></select>
+        discovered
+        <select id="f3"><option value="">—</option><option value="by">by</option><option value="from">from</option><option value="with">with</option><option value="to">to</option></select>
+        Columbus in 1492.
+      </div>
+      <div class="sentence">So many ingredients which today
+        <select id="f4"><option value="">—</option><option value="are">are</option><option value="is">is</option><option value="were">were</option><option value="was">was</option></select>
+        grown all over the world
+        <select id="f5"><option value="">—</option><option value="were">were</option><option value="was">was</option><option value="are">are</option><option value="had">had</option></select>
+        unknown to medieval Europeans.
+      </div>
+      <div class="sentence">Potatoes, tomatoes, maize and chocolate
+        <select id="f6"><option value="">—</option><option value="were">were</option><option value="was">was</option><option value="are">are</option><option value="had">had</option></select>
+        all originally imported from the New World.
+      </div>
+      <div class="sentence">Until then, meals had
+        <select id="f7"><option value="">—</option><option value="been">been</option><option value="be">be</option><option value="were">were</option><option value="was">was</option></select>
+        prepared using ingredients native to Europe.
+      </div>
+      <div class="sentence">Of course, spices such as pepper
+        <select id="f8"><option value="">—</option><option value="had">had</option><option value="have">have</option><option value="were">were</option><option value="was">was</option></select>
+        been traded and added to food for centuries.
+      </div>
+      <div class="sentence">When the potato
+        <select id="f9"><option value="">—</option><option value="was">was</option><option value="were">were</option><option value="is">is</option><option value="had">had</option></select>
+        first introduced, it was surprisingly unpopular. It
+        <select id="f10"><option value="">—</option><option value="was">was</option><option value="were">were</option><option value="had">had</option><option value="is">is</option></select>
+        considered to be poisonous…
+      </div>
+      <div class="sentence">There is a story of Parmentier… who
+        <select id="f11"><option value="">—</option><option value="had">had</option><option value="has">has</option><option value="was">was</option><option value="were">were</option></select>
+        potatoes planted in the royal garden and
+        <select id="f12"><option value="">—</option><option value="got">got</option><option value="get">get</option><option value="had">had</option><option value="was">was</option></select>
+        Marie Antoinette to wear a potato flower…
+      </div>
+      <div class="sentence">…and many of them
+        <select id="f13"><option value="">—</option><option value="were">were</option><option value="was">was</option><option value="had">had</option><option value="are">are</option></select>
+        stolen to be planted in their own gardens.
+      </div>
+      <div class="btn-row">
+        <button class="btn-check" onclick="checkSel('f', answers.f, 13, 'fb6', 'e6')">Перевірити</button>
+        <button class="btn-reset" onclick="resetSel('f', range(1,13), 'fb6', 'e6')">Скинути</button>
+      </div>
+      <div class="feedback" id="fb6"></div>
+    </div>
+
+    <!-- TOTAL -->
+    <div class="total-block">
+      <h2>📝 Підсумок домашнього завдання</h2>
+      <p class="hint">Спочатку перевірте кожну вправу, потім натисніть кнопку нижче.</p>
+      <button class="btn-total" onclick="calcTotal()">Порахувати загальний бал</button>
+      <div class="total-score-display" id="totalDisplay"></div>
+    </div>
+
+    <footer>
+      NMT-Food 1-h/w · Food vocabulary &amp; grammar<br>
+      Максимум: <strong>69 балів</strong>
+    </footer>
+  </div>
+
+  <script>
+    function range(a,b){var r=[];for(var i=a;i<=b;i++) r.push(i);return r;}
+    const answers = {
+      a: {1:'cuisine',2:'Frozen',3:'cook',4:'kettle',5:'menu',6:'hob',7:'freezer',8:'cooker',9:'dishes',10:'dinner',11:'vegan',12:'takeaway',13:'Fizzy'},
+      b: {1:'boil',2:'peel',3:'grate',4:'baking',5:'roasting',6:'following',7:'burned',8:'cook',9:'serve',10:'choose',11:'order',12:'recipe'},
+      c: {1:'C',2:'E',3:'F',4:'G',5:'A',6:'J',7:'B',8:'D',9:'K',10:'I',11:'H'},
+      d: {1:'frozen',2:'stale',3:'Skimmed',4:'baked',5:'tinned',6:'sparkling',7:'low-calorie',8:'dried',9:'soft',10:'fresh'},
+      e: {1:'ingredients',2:'chop',3:'fry',4:'oil',5:'sprinkle',6:'seasonings',7:'heat',8:'oven',9:'Stir',10:'appetite'},
+      f: {1:'was',2:'was',3:'by',4:'are',5:'were',6:'were',7:'been',8:'had',9:'was',10:'was',11:'had',12:'got',13:'were'}
+    };
+    const lastScores = {e1:null,e2:null,e3:null,e4:null,e5:null,e6:null};
+
+    function showFb(id,c,t){
+      const fb=document.getElementById(id);
+      fb.classList.add('show');
+      if(c===t){fb.className='feedback show success';fb.innerHTML='✅ Чудово! '+c+' / '+t;}
+      else{fb.className='feedback show error';fb.innerHTML='Результат: <span class="score">'+c+' / '+t+'</span>. Перевірте червоні поля.';}
+    }
+    function clearTotal(){document.getElementById('totalDisplay').className='total-score-display';document.getElementById('totalDisplay').innerHTML='';}
+    function checkSel(prefix, ans, total, fbId, key){
+      let c=0;
+      for(const[k,v] of Object.entries(ans)){
+        const el=document.getElementById(prefix+k);
+        if(!el) continue;
+        el.classList.remove('correct','wrong');
+        if(el.value===v){el.classList.add('correct');c++;}
+        else if(el.value) el.classList.add('wrong');
+      }
+      lastScores[key]={correct:c,total:total};
+      showFb(fbId,c,total);
+    }
+    function resetSel(prefix, keys, fbId, key){
+      keys.forEach(function(k){const el=document.getElementById(prefix+k);if(el){el.value='';el.classList.remove('correct','wrong');}});
+      document.getElementById(fbId).className='feedback';lastScores[key]=null;clearTotal();
+    }
+
+    function calcTotal(){
+      if(!lastScores.e1) checkSel('a',answers.a,13,'fb1','e1');
+      if(!lastScores.e2) checkSel('b',answers.b,12,'fb2','e2');
+      if(!lastScores.e3) checkSel('c',answers.c,11,'fb3','e3');
+      if(!lastScores.e4) checkSel('d',answers.d,10,'fb4','e4');
+      if(!lastScores.e5) checkSel('e',answers.e,10,'fb5','e5');
+      if(!lastScores.e6) checkSel('f',answers.f,13,'fb6','e6');
+      var s1=lastScores.e1.correct,s2=lastScores.e2.correct,s3=lastScores.e3.correct;
+      var s4=lastScores.e4.correct,s5=lastScores.e5.correct,s6=lastScores.e6.correct;
+      var total=s1+s2+s3+s4+s5+s6, max=69, pct=Math.round((total/max)*100);
+      var display=document.getElementById('totalDisplay');
+      var cls,msg;
+      if(pct>=80){cls='good';msg='Відмінно! 🎉';}
+      else if(pct>=50){cls='mid';msg='Добре, є над чим попрацювати.';}
+      else{cls='bad';msg='Потрібно повторити матеріал.';}
+      display.className='total-score-display show '+cls;
+      display.innerHTML='<div>'+msg+'</div><div class="big-score">'+total+' / '+max+'</div><div>'+pct+'%</div><div class="breakdown"><div><span>1. Circle the correct word</span><span>'+s1+' / 13</span></div><div><span>2. Cooking forum verbs</span><span>'+s2+' / 12</span></div><div><span>3. Match adjectives to food</span><span>'+s3+' / 11</span></div><div><span>4. Food adjectives (box)</span><span>'+s4+' / 10</span></div><div><span>5. Recipe words</span><span>'+s5+' / 10</span></div><div><span>6. European Diet (passive)</span><span>'+s6+' / 13</span></div></div>';
+    }
+  </script>
+</body>
+</html>
