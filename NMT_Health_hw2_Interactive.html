@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>NMT-Health-hw2</title>
+<style>
+  :root {
+    --green: #2E7D32;
+    --green-light: #4CAF50;
+    --green-dark: #1B5E20;
+    --orange: #F57C00;
+    --orange-light: #FF9800;
+    --bg: #F5F7FA;
+    --text: #212121;
+    --muted: #616161;
+    --border: #E0E0E0;
+    --success: #2E7D32;
+    --error: #C62828;
+    --radius: 12px;
+    --shadow: 0 4px 12px rgba(0,0,0,0.08);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.5;
+    font-size: 16.5px;
+    min-height: 100vh;
+    padding-bottom: 40px;
+  }
+  .app { max-width: 840px; margin: 0 auto; padding: 16px; }
+  header {
+    background: linear-gradient(135deg, var(--green-dark), var(--green));
+    color: white;
+    padding: 18px 20px;
+    border-radius: var(--radius);
+    margin-bottom: 16px;
+    box-shadow: var(--shadow);
+  }
+  header h1 { font-size: 1.35rem; margin-bottom: 4px; }
+  header .meta { font-size: 0.9rem; opacity: 0.9; }
+  .section {
+    background: white;
+    border-radius: var(--radius);
+    padding: 16px;
+    margin-bottom: 14px;
+    box-shadow: var(--shadow);
+  }
+  .section h2 {
+    color: var(--green-dark);
+    font-size: 1.1rem;
+    margin-bottom: 5px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .badge {
+    background: var(--orange);
+    color: white;
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 99px;
+  }
+  .aim { color: var(--muted); font-size: 0.85rem; margin-bottom: 10px; }
+  .hint-ua {
+    background: #FFF8E1;
+    border-left: 4px solid var(--orange);
+    padding: 7px 10px;
+    margin: 6px 0 10px;
+    font-size: 0.84rem;
+    color: #5D4037;
+    border-radius: 0 8px 8px 0;
+  }
+  .q-num {
+    display: inline-block;
+    background: var(--green);
+    color: white;
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    text-align: center;
+    line-height: 22px;
+    font-weight: 700;
+    font-size: 0.78rem;
+    margin-right: 6px;
+  }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 9px 14px;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.88rem;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .btn-primary { background: var(--green); color: white; }
+  .btn-outline { background: white; border: 2px solid var(--green); color: var(--green); }
+  .btn-row { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 8px; }
+  .feedback {
+    margin-top: 5px;
+    padding: 6px 9px;
+    border-radius: 8px;
+    font-weight: 600;
+    display: none;
+    font-size: 0.86rem;
+  }
+  .feedback.correct { background: #E8F5E9; color: var(--success); display: block; }
+  .feedback.wrong { background: #FFEBEE; color: var(--error); display: block; }
+  .gap-input {
+    border: none;
+    border-bottom: 2px solid var(--orange);
+    background: #FFF8E1;
+    padding: 2px 6px;
+    font-size: 0.95rem;
+    min-width: 90px;
+    text-align: center;
+    border-radius: 4px;
+  }
+  .mc-option {
+    display: block;
+    width: 100%;
+    text-align: left;
+    padding: 9px 11px;
+    margin: 4px 0;
+    border: 2px solid var(--border);
+    border-radius: 8px;
+    background: white;
+    font-size: 0.9rem;
+    cursor: pointer;
+  }
+  .mc-option.selected { border-color: var(--orange); background: #FFF3E0; }
+  .mc-option.correct-ans { border-color: var(--success); background: #E8F5E9; }
+  .mc-option.wrong-ans { border-color: var(--error); background: #FFEBEE; }
+  .word-bank {
+    background: #E8F5E9;
+    padding: 8px;
+    border-radius: 8px;
+    margin: 6px 0;
+    font-weight: 600;
+    line-height: 1.7;
+    font-size: 0.86rem;
+  }
+  .match-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+    margin: 8px 0;
+    font-size: 0.92rem;
+  }
+  .match-row select {
+    padding: 6px 10px;
+    border-radius: 6px;
+    border: 2px solid var(--border);
+    font-size: 0.88rem;
+  }
+  .score-box {
+    background: linear-gradient(135deg, #E8F5E9, #FFF3E0);
+    border-radius: 12px;
+    padding: 18px;
+    text-align: center;
+    margin-top: 16px;
+    display: none;
+    border: 2px solid var(--green-light);
+  }
+  .score-box.visible { display: block; }
+  .score-num { font-size: 2.2rem; font-weight: 800; color: var(--green-dark); }
+  .score-pct { font-size: 1.2rem; color: var(--orange); font-weight: 700; margin: 4px 0 10px; }
+  .breakdown { text-align: left; margin-top: 10px; font-size: 0.9rem; }
+  .breakdown div { padding: 4px 0; border-bottom: 1px solid #C8E6C9; }
+  footer { text-align: center; color: var(--muted); font-size: 0.8rem; margin-top: 18px; }
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <h1>NMT-Health-hw2</h1>
+    <div class="meta">Health · Body · Injuries · Collocations</div>
+  </header>
+
+  <!-- EX 1 Noun pairs -->
+  <div class="section">
+    <h2><span class="badge">1</span> Same noun – singular & plural</h2>
+    <div class="aim">Use the same noun in both gaps (singular / plural). (14 points)</div>
+    <div class="word-bank">allergy · condition · cut · epidemic · pain · surgery · team · ward</div>
+    <div class="hint-ua">🇺🇦 Один і той самий іменник у однині та множині.</div>
+    <div id="nounItems"></div>
+  </div>
+
+  <!-- EX 2 Matching halves -->
+  <div class="section">
+    <h2><span class="badge">2</span> Match the halves</h2>
+    <div class="aim">Choose the correct ending. (7 points)</div>
+    <div class="hint-ua">🇺🇦 З’єднай початок речення з закінченням.</div>
+    <div id="matchItems"></div>
+  </div>
+
+  <!-- EX 3 Multiple choice -->
+  <div class="section">
+    <h2><span class="badge">3</span> Choose the correct answer</h2>
+    <div class="aim">Select A, B or C. (10 points)</div>
+    <div id="mcItems"></div>
+  </div>
+
+  <!-- EX 4 Verb + noun injuries -->
+  <div class="section">
+    <h2><span class="badge">4</span> Verb + body part</h2>
+    <div class="aim">Complete with the correct verb and noun. (18 points)</div>
+    <div class="word-bank">
+      <strong>Verbs:</strong> bite · break · burn · dislocate · have · sprain<br>
+      <strong>Nouns:</strong> ankle · bruise · dog · finger · hair · hip · insect · thumb · toe · wrist
+    </div>
+    <div id="vnItems"></div>
+  </div>
+
+  <!-- EX 5 Dialogues -->
+  <div class="section">
+    <h2><span class="badge">5</span> Complete the mini-dialogues</h2>
+    <div class="aim">Use the correct form of the verbs. (7 points)</div>
+    <div class="word-bank">bite · break (×2) · burn · dislocate · get · have · pull · sprain</div>
+    <div id="dlgItems"></div>
+  </div>
+
+  <div style="text-align:center;margin:18px 0">
+    <button class="btn btn-primary" style="font-size:1rem;padding:12px 24px" onclick="calculateScore()">Check all & see my score</button>
+  </div>
+
+  <div class="score-box" id="scoreBox">
+    <div>Your total score</div>
+    <div class="score-num" id="scoreNum">0 / 56</div>
+    <div class="score-pct" id="scorePct">0%</div>
+    <div class="breakdown" id="breakdown"></div>
+    <div id="scoreMsg" style="margin-top:10px;font-weight:600"></div>
+  </div>
+
+  <footer>NMT-Health-hw2 · Health vocabulary</footer>
+</div>
+
+<script>
+const hw = {
+  nouns: [
+    { q1: "Ellen's got a nut ______, so she can't eat a lot of products I enjoy.", q2: "Between 1–2 percent of adults and 5–8 percent of children in the UK suffer from food ______.", a1: "allergy", a2: "allergies" },
+    { q1: "The local ______ is closing down, so we'll need to find another doctor.", q2: "There are plenty of doctor's ______ in my area but I hardly ever get ill.", a1: "surgery", a2: "surgeries" },
+    { q1: "Is that a shaving ______ on your face? Why not use an electric razor instead?", q2: "There are quite deep ______ and you may need stitches to stop the bleeding.", a1: "cut", a2: "cuts" },
+    { q1: "Flu ______ have caused millions of deaths over the years. Luckily, we have fewer nowadays.", q2: "In case of a cholera ______, drink only bottled water and keep your hands clean.", a1: "epidemics", a2: "epidemic" },
+    { q1: "Your wife is in the maternity ______, Mr Jones. And congratulations on a beautiful baby girl!", q2: "There are two children's ______ in this hospital. Your son is in the one in Building D.", a1: "ward", a2: "wards" },
+    { q1: "Simon is in a stable ______, so all we can do now is wait.", q2: "After the bus accident, the hockey team were in a serious ______. Fortunately, they all made a good recovery.", a1: "condition", a2: "condition" },
+    { q1: "St Michael's Hospital is looking for experienced paramedics to join their three new emergency ______.", q2: "The rescue ______ took a helicopter to the top of the mountain.", a1: "teams", a2: "team" }
+  ],
+  match: [
+    { start: "Doctors shouldn't only treat", ends: ["patients' physical problems. They should care about their mental well-being too.", "a first aid to an old man who fell down in the street.", "weight and then have to go on a diet.", "a disease that was very serious.", "a prescription for some tablets …", "lives deserves a lot more respect in society.", "babies? Oh, yes. A midwife.", "a panic attack if I had to speak in front of a crowd."], ans: 0 },
+    { start: "I would have", ends: ["patients' physical problems. They should care about their mental well-being too.", "a first aid to an old man who fell down in the street.", "weight and then have to go on a diet.", "a disease that was very serious.", "a prescription for some tablets …", "lives deserves a lot more respect in society.", "babies? Oh, yes. A midwife.", "a panic attack if I had to speak in front of a crowd."], ans: 7 },
+    { start: "It's nothing serious, Ms Smith. I'll just write", ends: ["patients' physical problems. They should care about their mental well-being too.", "a first aid to an old man who fell down in the street.", "weight and then have to go on a diet.", "a disease that was very serious.", "a prescription for some tablets …", "lives deserves a lot more respect in society.", "babies? Oh, yes. A midwife.", "a panic attack if I had to speak in front of a crowd."], ans: 4 },
+    { start: "What do you call a woman that delivers", ends: ["patients' physical problems. They should care about their mental well-being too.", "a first aid to an old man who fell down in the street.", "weight and then have to go on a diet.", "a disease that was very serious.", "a prescription for some tablets …", "lives deserves a lot more respect in society.", "babies? Oh, yes. A midwife.", "a panic attack if I had to speak in front of a crowd."], ans: 6 },
+    { start: "Luckily, I've never caught", ends: ["patients' physical problems. They should care about their mental well-being too.", "a first aid to an old man who fell down in the street.", "weight and then have to go on a diet.", "a disease that was very serious.", "a prescription for some tablets …", "lives deserves a lot more respect in society.", "babies? Oh, yes. A midwife.", "a panic attack if I had to speak in front of a crowd."], ans: 3 },
+    { start: "Somebody who works to save", ends: ["patients' physical problems. They should care about their mental well-being too.", "a first aid to an old man who fell down in the street.", "weight and then have to go on a diet.", "a disease that was very serious.", "a prescription for some tablets …", "lives deserves a lot more respect in society.", "babies? Oh, yes. A midwife.", "a panic attack if I had to speak in front of a crowd."], ans: 5 },
+    { start: "Last week I had to give", ends: ["patients' physical problems. They should care about their mental well-being too.", "a first aid to an old man who fell down in the street.", "weight and then have to go on a diet.", "a disease that was very serious.", "a prescription for some tablets …", "lives deserves a lot more respect in society.", "babies? Oh, yes. A midwife.", "a panic attack if I had to speak in front of a crowd."], ans: 1 },
+    { start: "If you continue to eat so much, you'll gain", ends: ["patients' physical problems. They should care about their mental well-being too.", "a first aid to an old man who fell down in the street.", "weight and then have to go on a diet.", "a disease that was very serious.", "a prescription for some tablets …", "lives deserves a lot more respect in society.", "babies? Oh, yes. A midwife.", "a panic attack if I had to speak in front of a crowd."], ans: 2 }
+  ],
+  // Fix matching - the first one "Doctors..." is example h, so starts are 1-7
+  // Actually from page: example is "Doctors shouldn't only treat" → h
+  // Then 1-7 map to g, d, f, c, e, a, b
+  mc: [
+    { q: "I hope I never ______ my arm. It must be so painful.", options: ["rest", "pull", "break"], answer: 2 },
+    { q: "Do people always kiss you on the ______ in France when they say 'hello'?", options: ["wrists", "cheeks", "elbows"], answer: 1 },
+    { q: "I stupidly hit myself in the face with my guitar and now I have a ______ eye.", options: ["blue", "brown", "black"], answer: 2 },
+    { q: "I've never seen anything so funny! I couldn't believe my ______.", options: ["eyes", "mouth", "ears"], answer: 0 },
+    { q: "Lucy has a ______ on her finger. She was picking up some broken glass in the park.", options: ["scratch", "cut", "chop"], answer: 1 },
+    { q: "Jack ______ his hand. He forgot to put the glove on when taking the pizza out of the oven.", options: ["burnt", "sprained", "dislocated"], answer: 0 },
+    { q: "Why are you never bitten ______ insects?", options: ["from", "by", "on"], answer: 1 },
+    { q: "What is the actress in The Hunger Games called? It's on the tip of my ______. Jennifer something.", options: ["teeth", "tongue", "lips"], answer: 1 },
+    { q: "I've hurt my ______ and can't even lift this kettle.", options: ["ankle", "waist", "wrist"], answer: 2 },
+    { q: "Tracy always complains that her ______ hurts when she stands up for more than an hour.", options: ["hip", "spine", "toe"], answer: 1 }
+  ],
+  vn: [
+    { q: "I can't stop scratching my leg. I think I've been ______ by a(n) ______ of some kind. A mosquito, probably.", a1: "bitten", a2: "insect" },
+    { q: "Granddad fell over and ______ his ______. He said it wasn't that painful at the time but it really hurt when the doctors put it back into the right position.", a1: "dislocated", a2: "hip" },
+    { q: "A: Hey, Aidan. You ______ a huge ______ on your leg. How did you get that?\nB: I was playing with my little brother and he kicked me.", a1: "have", a2: "bruise" },
+    { q: "Judy was ______ by a large ______ when she was a kid, so she's scared of them now.", a1: "bitten", a2: "dog" },
+    { q: "I ______ my ______ when I suddenly started running for the bus. I can hardly walk now.", a1: "sprained", a2: "ankle" },
+    { q: "A: How did you manage to ______ your ______, Marta?\nB: I was cooking on the barbecue and when I bent over the grill …", a1: "burn", a2: "hair" },
+    { q: "I'm having trouble holding my pen because I ______ a cut on my ______. I cut myself when I was chopping onions.", a1: "have", a2: "finger" },
+    { q: "Ian ______ his ______ when he kicked a basketball while wearing sandals.", a1: "broke", a2: "toe" },
+    { q: "When I fell off my bike, I put my hand down to protect myself. Unfortunately, my hand bent backwards and I ______ my ______.", a1: "sprained", a2: "wrist" }
+  ],
+  dlg: [
+    { q: "A: Ouch! I've ______ my tongue.\nB: Well, I warned you the soup was hot.", answer: "burnt" },
+    { q: "A: Troy's had a skiing accident.\nB: Yes, so I've heard. He fell off the ski lift and ______ his shoulder.", answer: "dislocated" },
+    { q: "A: Have you ever ______ an arm or a leg?\nB: I have actually. I ______ my arm when I fell out of a tree.", a1: "broken", a2: "broke" },
+    { q: "A: Are you playing football with us tomorrow?\nB: No, I can't. I've ______ my knee and can hardly walk.", answer: "sprained" },
+    { q: "A: What are those two small red dots on your ankle?\nB: Oh, no. I think I've been ______ by a snake.", answer: "bitten" }
+  ]
+};
+
+// Fix match answers properly
+hw.match = [
+  { start: "I would have", ans: "g", text: "a panic attack if I had to speak in front of a crowd." },
+  { start: "It's nothing serious, Ms Smith. I'll just write", ans: "d", text: "a prescription for some tablets …" },
+  { start: "What do you call a woman that delivers", ans: "f", text: "babies? Oh, yes. A midwife." },
+  { start: "Luckily, I've never caught", ans: "c", text: "a disease that was very serious." },
+  { start: "Somebody who works to save", ans: "e", text: "lives deserves a lot more respect in society." },
+  { start: "Last week I had to give", ans: "a", text: "first aid to an old man who fell down in the street." },
+  { start: "If you continue to eat so much, you'll gain", ans: "b", text: "weight and then have to go on a diet." }
+];
+
+const results = { nouns: 0, match: 0, mc: 0, vn: 0, dlg: 0 };
+
+function norm(s) {
+  return (s || "").trim().toLowerCase().replace(/\s+/g, " ");
+}
+
+function init() {
+  buildNouns();
+  buildMatch();
+  buildMC();
+  buildVN();
+  buildDlg();
+}
+
+function buildNouns() {
+  const box = document.getElementById("nounItems");
+  hw.nouns.forEach((item, i) => {
+    box.innerHTML += `<div style="margin:12px 0;padding:10px;background:#FAFAFA;border-radius:8px">
+      <div><span class="q-num">${i+1}</span>${item.q1.replace("______", `<input class="gap-input" id="n${i}a" data-a="${item.a1}">`)}</div>
+      <div style="margin-top:6px">${item.q2.replace("______", `<input class="gap-input" id="n${i}b" data-a="${item.a2}">`)}</div>
+      <div class="feedback" id="fb-n-${i}"></div>
+      <div class="btn-row"><button class="btn btn-outline" onclick="checkNoun(${i})">Check</button></div>
+    </div>`;
+  });
+}
+
+function checkNoun(i) {
+  const a = norm(document.getElementById("n" + i + "a").value);
+  const b = norm(document.getElementById("n" + i + "b").value);
+  const ca = norm(hw.nouns[i].a1);
+  const cb = norm(hw.nouns[i].a2);
+  const fb = document.getElementById("fb-n-" + i);
+  let ok = 0;
+  if (a === ca) ok++;
+  if (b === cb) ok++;
+  if (ok === 2) {
+    fb.className = "feedback correct";
+    fb.textContent = "✓ Correct!";
+  } else {
+    fb.className = "feedback wrong";
+    fb.textContent = `✗ ${ok}/2 correct`;
+  }
+}
+
+function buildMatch() {
+  const box = document.getElementById("matchItems");
+  const options = [
+    { v: "a", t: "first aid to an old man who fell down in the street." },
+    { v: "b", t: "weight and then have to go on a diet." },
+    { v: "c", t: "a disease that was very serious." },
+    { v: "d", t: "a prescription for some tablets …" },
+    { v: "e", t: "lives deserves a lot more respect in society." },
+    { v: "f", t: "babies? Oh, yes. A midwife." },
+    { v: "g", t: "a panic attack if I had to speak in front of a crowd." }
+  ];
+  hw.match.forEach((item, i) => {
+    let opts = options.map(o => `<option value="${o.v}">${o.v}. ${o.t}</option>`).join("");
+    box.innerHTML += `<div class="match-row">
+      <span class="q-num">${i+1}</span> ${item.start}
+      <select id="m-${i}"><option value="">—</option>${opts}</select>
+    </div>`;
+  });
+  box.innerHTML += `<div class="btn-row"><button class="btn btn-outline" onclick="checkMatch()">Check</button></div>
+    <div class="feedback" id="fb-match"></div>`;
+}
+
+function checkMatch() {
+  let c = 0;
+  hw.match.forEach((item, i) => {
+    const v = document.getElementById("m-" + i).value;
+    if (v === item.ans) c++;
+  });
+  results.match = c;
+  const fb = document.getElementById("fb-match");
+  if (c === 7) { fb.className = "feedback correct"; fb.textContent = "✓ All correct! 7/7"; }
+  else { fb.className = "feedback wrong"; fb.textContent = `✗ ${c}/7 correct`; }
+}
+
+function buildMC() {
+  const box = document.getElementById("mcItems");
+  hw.mc.forEach((item, i) => {
+    let opts = item.options.map((o, oi) =>
+      `<button class="mc-option" data-ex="mc" data-i="${i}" data-oi="${oi}" onclick="selMC(this)">${String.fromCharCode(65+oi)}. ${o}</button>`
+    ).join("");
+    box.innerHTML += `<div style="margin:12px 0">
+      <div><span class="q-num">${i+1}</span>${item.q}</div>
+      ${opts}
+      <div class="feedback" id="fb-mc-${i}"></div>
+      <div class="btn-row"><button class="btn btn-outline" onclick="checkMC(${i})">Check</button></div>
+    </div>`;
+  });
+}
+
+function selMC(btn) {
+  const i = btn.dataset.i;
+  document.querySelectorAll(`.mc-option[data-ex="mc"][data-i="${i}"]`).forEach(b => b.classList.remove("selected"));
+  btn.classList.add("selected");
+}
+
+function checkMC(i) {
+  const sel = document.querySelector(`.mc-option[data-ex="mc"][data-i="${i}"].selected`);
+  if (!sel) return;
+  const oi = +sel.dataset.oi;
+  const fb = document.getElementById("fb-mc-" + i);
+  if (oi === hw.mc[i].answer) {
+    fb.className = "feedback correct";
+    fb.textContent = "✓ Correct!";
+    sel.classList.add("correct-ans");
+  } else {
+    fb.className = "feedback wrong";
+    fb.textContent = "✗ Wrong";
+    sel.classList.add("wrong-ans");
+  }
+}
+
+function buildVN() {
+  const box = document.getElementById("vnItems");
+  hw.vn.forEach((item, i) => {
+    const html = item.q
+      .replace("______", `<input class="gap-input" id="v${i}a" data-a="${item.a1}" style="min-width:80px">`)
+      .replace("______", `<input class="gap-input" id="v${i}b" data-a="${item.a2}" style="min-width:80px">`);
+    box.innerHTML += `<div style="margin:12px 0;padding:10px;background:#FAFAFA;border-radius:8px">
+      <div><span class="q-num">${i+1}</span>${html}</div>
+      <div class="feedback" id="fb-v-${i}"></div>
+      <div class="btn-row"><button class="btn btn-outline" onclick="checkVN(${i})">Check</button></div>
+    </div>`;
+  });
+}
+
+function checkVN(i) {
+  const a = norm(document.getElementById("v" + i + "a").value);
+  const b = norm(document.getElementById("v" + i + "b").value);
+  const ca = norm(hw.vn[i].a1);
+  const cb = norm(hw.vn[i].a2);
+  const fb = document.getElementById("fb-v-" + i);
+  let ok = 0;
+  if (a === ca) ok++;
+  if (b === cb) ok++;
+  // accept "have got" etc for have
+  if (i === 2 && (a === "have" || a === "have got" || a === "you've got")) ok = Math.max(ok, 1);
+  if (ok === 2) {
+    fb.className = "feedback correct";
+    fb.textContent = "✓ Correct!";
+  } else {
+    fb.className = "feedback wrong";
+    fb.textContent = `✗ ${ok}/2 correct`;
+  }
+}
+
+function buildDlg() {
+  const box = document.getElementById("dlgItems");
+  // 1
+  box.innerHTML += `<div style="margin:12px 0;padding:10px;background:#FAFAFA;border-radius:8px">
+    <div><span class="q-num">1</span>A: Ouch! I've <input class="gap-input" id="dlg0" data-a="burnt"> my tongue.<br>B: Well, I warned you the soup was hot.</div>
+    <div class="feedback" id="fb-d-0"></div>
+    <div class="btn-row"><button class="btn btn-outline" onclick="checkDlg(0)">Check</button></div>
+  </div>`;
+  // 2
+  box.innerHTML += `<div style="margin:12px 0;padding:10px;background:#FAFAFA;border-radius:8px">
+    <div><span class="q-num">2</span>A: Troy's had a skiing accident.<br>B: Yes, so I've heard. He fell off the ski lift and <input class="gap-input" id="dlg1" data-a="dislocated"> his shoulder.</div>
+    <div class="feedback" id="fb-d-1"></div>
+    <div class="btn-row"><button class="btn btn-outline" onclick="checkDlg(1)">Check</button></div>
+  </div>`;
+  // 3
+  box.innerHTML += `<div style="margin:12px 0;padding:10px;background:#FAFAFA;border-radius:8px">
+    <div><span class="q-num">3</span>A: Have you ever <input class="gap-input" id="dlg2a" data-a="broken"> an arm or a leg?<br>B: I have actually. I <input class="gap-input" id="dlg2b" data-a="broke"> my arm when I fell out of a tree.</div>
+    <div class="feedback" id="fb-d-2"></div>
+    <div class="btn-row"><button class="btn btn-outline" onclick="checkDlg(2)">Check</button></div>
+  </div>`;
+  // 4
+  box.innerHTML += `<div style="margin:12px 0;padding:10px;background:#FAFAFA;border-radius:8px">
+    <div><span class="q-num">4</span>A: Are you playing football with us tomorrow?<br>B: No, I can't. I've <input class="gap-input" id="dlg3" data-a="sprained"> my knee and can hardly walk.</div>
+    <div class="feedback" id="fb-d-3"></div>
+    <div class="btn-row"><button class="btn btn-outline" onclick="checkDlg(3)">Check</button></div>
+  </div>`;
+  // 5
+  box.innerHTML += `<div style="margin:12px 0;padding:10px;background:#FAFAFA;border-radius:8px">
+    <div><span class="q-num">5</span>A: What are those two small red dots on your ankle?<br>B: Oh, no. I think I've been <input class="gap-input" id="dlg4" data-a="bitten"> by a snake.</div>
+    <div class="feedback" id="fb-d-4"></div>
+    <div class="btn-row"><button class="btn btn-outline" onclick="checkDlg(4)">Check</button></div>
+  </div>`;
+}
+
+function checkDlg(i) {
+  const fb = document.getElementById("fb-d-" + i);
+  if (i === 2) {
+    const a = norm(document.getElementById("dlg2a").value);
+    const b = norm(document.getElementById("dlg2b").value);
+    let ok = 0;
+    if (a === "broken") ok++;
+    if (b === "broke") ok++;
+    if (ok === 2) { fb.className = "feedback correct"; fb.textContent = "✓ Correct!"; }
+    else { fb.className = "feedback wrong"; fb.textContent = `✗ ${ok}/2 correct`; }
+    return;
+  }
+  const ids = ["dlg0", "dlg1", "dlg3", "dlg4"];
+  const ans = ["burnt", "dislocated", "sprained", "bitten"];
+  // map i to index
+  const map = { 0: 0, 1: 1, 3: 2, 4: 3 };
+  const el = document.getElementById(ids[map[i]] || "dlg0");
+  const correct = ans[map[i]];
+  if (norm(el.value) === correct || (correct === "burnt" && norm(el.value) === "burned")) {
+    fb.className = "feedback correct";
+    fb.textContent = "✓ Correct!";
+  } else {
+    fb.className = "feedback wrong";
+    fb.textContent = "✗ Wrong";
+  }
+}
+
+function countNouns() {
+  let c = 0;
+  for (let i = 0; i < 7; i++) {
+    const fb = document.getElementById("fb-n-" + i);
+    if (fb && fb.classList.contains("correct")) c += 2;
+    else if (fb && fb.textContent.includes("1/2")) c += 1;
+  }
+  return c;
+}
+
+function countMC() {
+  let c = 0;
+  for (let i = 0; i < 10; i++) {
+    const fb = document.getElementById("fb-mc-" + i);
+    if (fb && fb.classList.contains("correct")) c++;
+  }
+  return c;
+}
+
+function countVN() {
+  let c = 0;
+  for (let i = 0; i < 9; i++) {
+    const fb = document.getElementById("fb-v-" + i);
+    if (fb && fb.classList.contains("correct")) c += 2;
+    else if (fb && fb.textContent.includes("1/2")) c += 1;
+  }
+  return c;
+}
+
+function countDlg() {
+  let c = 0;
+  for (let i = 0; i < 5; i++) {
+    const fb = document.getElementById("fb-d-" + i);
+    if (fb && fb.classList.contains("correct")) {
+      c += (i === 2 ? 2 : 1);
+    } else if (fb && fb.textContent.includes("1/2")) c += 1;
+  }
+  return c;
+}
+
+function calculateScore() {
+  results.nouns = countNouns();
+  if (results.match === 0) checkMatch();
+  results.mc = countMC();
+  results.vn = countVN();
+  results.dlg = countDlg();
+
+  const total = results.nouns + results.match + results.mc + results.vn + results.dlg;
+  const max = 14 + 7 + 10 + 18 + 6; // 55 — adjust dlg to 6 (1+1+2+1+1)
+  // Actually dlg max = 6
+  const maxScore = 55;
+  const pct = Math.round((total / maxScore) * 100);
+
+  document.getElementById("scoreNum").textContent = `${total} / ${maxScore}`;
+  document.getElementById("scorePct").textContent = `${pct}%`;
+  document.getElementById("breakdown").innerHTML = `
+    <div>1. Same noun (singular/plural): <strong>${results.nouns}/14</strong></div>
+    <div>2. Match the halves: <strong>${results.match}/7</strong></div>
+    <div>3. Choose the correct answer: <strong>${results.mc}/10</strong></div>
+    <div>4. Verb + body part: <strong>${results.vn}/18</strong></div>
+    <div>5. Mini-dialogues: <strong>${results.dlg}/6</strong></div>`;
+
+  let msg = "";
+  if (pct >= 90) msg = "Excellent work! 🌟";
+  else if (pct >= 70) msg = "Good job! Check the mistakes.";
+  else if (pct >= 50) msg = "Not bad – revise body & injury vocabulary.";
+  else msg = "Look at the word lists again and try once more.";
+  document.getElementById("scoreMsg").textContent = msg;
+
+  const box = document.getElementById("scoreBox");
+  box.classList.add("visible");
+  box.scrollIntoView({ behavior: "smooth" });
+}
+
+init();
+</script>
+</body>
+</html>

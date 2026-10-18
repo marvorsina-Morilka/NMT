@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>NMT-Health-hw4</title>
+<style>
+  :root {
+    --green: #2E7D32;
+    --green-light: #4CAF50;
+    --green-dark: #1B5E20;
+    --orange: #F57C00;
+    --orange-light: #FF9800;
+    --bg: #F5F7FA;
+    --text: #212121;
+    --muted: #616161;
+    --border: #E0E0E0;
+    --success: #2E7D32;
+    --error: #C62828;
+    --radius: 12px;
+    --shadow: 0 4px 12px rgba(0,0,0,0.08);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.5;
+    font-size: 16.5px;
+    min-height: 100vh;
+    padding-bottom: 40px;
+  }
+  .app { max-width: 820px; margin: 0 auto; padding: 16px; }
+  header {
+    background: linear-gradient(135deg, var(--green-dark), var(--green));
+    color: white;
+    padding: 18px 20px;
+    border-radius: var(--radius);
+    margin-bottom: 16px;
+    box-shadow: var(--shadow);
+  }
+  header h1 { font-size: 1.35rem; margin-bottom: 4px; }
+  header .meta { font-size: 0.9rem; opacity: 0.9; }
+  .section {
+    background: white;
+    border-radius: var(--radius);
+    padding: 16px;
+    margin-bottom: 14px;
+    box-shadow: var(--shadow);
+  }
+  .section h2 {
+    color: var(--green-dark);
+    font-size: 1.1rem;
+    margin-bottom: 5px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .badge {
+    background: var(--orange);
+    color: white;
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 99px;
+  }
+  .aim { color: var(--muted); font-size: 0.85rem; margin-bottom: 10px; }
+  .hint-ua {
+    background: #FFF8E1;
+    border-left: 4px solid var(--orange);
+    padding: 7px 10px;
+    margin: 6px 0 10px;
+    font-size: 0.84rem;
+    color: #5D4037;
+    border-radius: 0 8px 8px 0;
+  }
+  .q-num {
+    display: inline-block;
+    background: var(--green);
+    color: white;
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    text-align: center;
+    line-height: 22px;
+    font-weight: 700;
+    font-size: 0.78rem;
+    margin-right: 6px;
+  }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 9px 14px;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.88rem;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .btn-primary { background: var(--green); color: white; }
+  .btn-outline { background: white; border: 2px solid var(--green); color: var(--green); }
+  .btn-row { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 8px; }
+  .feedback {
+    margin-top: 5px;
+    padding: 6px 9px;
+    border-radius: 8px;
+    font-weight: 600;
+    display: none;
+    font-size: 0.86rem;
+  }
+  .feedback.correct { background: #E8F5E9; color: var(--success); display: block; }
+  .feedback.wrong { background: #FFEBEE; color: var(--error); display: block; }
+  .gap-input {
+    border: none;
+    border-bottom: 2px solid var(--orange);
+    background: #FFF8E1;
+    padding: 2px 6px;
+    font-size: 0.95rem;
+    min-width: 90px;
+    text-align: center;
+    border-radius: 4px;
+  }
+  .mc-option {
+    display: block;
+    width: 100%;
+    text-align: left;
+    padding: 9px 11px;
+    margin: 4px 0;
+    border: 2px solid var(--border);
+    border-radius: 8px;
+    background: white;
+    font-size: 0.9rem;
+    cursor: pointer;
+  }
+  .mc-option.selected { border-color: var(--orange); background: #FFF3E0; }
+  .mc-option.correct-ans { border-color: var(--success); background: #E8F5E9; }
+  .mc-option.wrong-ans { border-color: var(--error); background: #FFEBEE; }
+  .word-bank {
+    background: #E8F5E9;
+    padding: 8px;
+    border-radius: 8px;
+    margin: 6px 0;
+    font-weight: 600;
+    line-height: 1.7;
+    font-size: 0.86rem;
+  }
+  .choice-pair {
+    display: inline-flex;
+    gap: 6px;
+    margin: 0 4px;
+  }
+  .choice-btn {
+    padding: 4px 10px;
+    border: 2px solid var(--border);
+    border-radius: 6px;
+    background: white;
+    font-size: 0.88rem;
+    cursor: pointer;
+  }
+  .choice-btn.selected { border-color: var(--orange); background: #FFF3E0; }
+  .choice-btn.correct { border-color: var(--success); background: #E8F5E9; }
+  .choice-btn.wrong { border-color: var(--error); background: #FFEBEE; }
+  .score-box {
+    background: linear-gradient(135deg, #E8F5E9, #FFF3E0);
+    border-radius: 12px;
+    padding: 18px;
+    text-align: center;
+    margin-top: 16px;
+    display: none;
+    border: 2px solid var(--green-light);
+  }
+  .score-box.visible { display: block; }
+  .score-num { font-size: 2.2rem; font-weight: 800; color: var(--green-dark); }
+  .score-pct { font-size: 1.2rem; color: var(--orange); font-weight: 700; margin: 4px 0 10px; }
+  .breakdown { text-align: left; margin-top: 10px; font-size: 0.9rem; }
+  .breakdown div { padding: 4px 0; border-bottom: 1px solid #C8E6C9; }
+  footer { text-align: center; color: var(--muted); font-size: 0.8rem; margin-top: 18px; }
+  .text-box {
+    background: #F5F5F5;
+    border-radius: 8px;
+    padding: 12px;
+    font-size: 0.92rem;
+    line-height: 1.85;
+    margin-bottom: 8px;
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <h1>NMT-Health-hw4</h1>
+    <div class="meta">Health vocabulary · Collocations · Word choice · Gap fill</div>
+  </header>
+
+  <!-- EX 1 Multiple choice collocations -->
+  <div class="section">
+    <h2><span class="badge">1</span> Choose the correct answer</h2>
+    <div class="aim">Select the best option. (12 points)</div>
+    <div class="hint-ua">🇺🇦 Обери правильний варіант (collocations).</div>
+    <div id="mcItems"></div>
+  </div>
+
+  <!-- EX 2 Circle the correct word -->
+  <div class="section">
+    <h2><span class="badge">2</span> Circle the correct word</h2>
+    <div class="aim">Click the correct word in each pair. (10 points)</div>
+    <div class="hint-ua">🇺🇦 Натисни правильне слово в парі.</div>
+    <div id="circItems"></div>
+  </div>
+
+  <!-- EX 3 Word box gap-fill -->
+  <div class="section">
+    <h2><span class="badge">3</span> Complete with the correct word</h2>
+    <div class="aim">Use the words from the boxes. (12 points)</div>
+    <div class="word-bank">
+      prescription · recipe · remedy · cure · therapy · examine · investigate · operation · surgery · pain · sore · hurt
+    </div>
+    <div class="hint-ua">🇺🇦 Впиши слово з рамочок у правильній формі.</div>
+    <div id="gapItems"></div>
+  </div>
+
+  <!-- EX 4 Damaged text -->
+  <div class="section">
+    <h2><span class="badge">4</span> The Drug Problem – restore the text</h2>
+    <div class="aim">Fill in the missing words. (10 points)</div>
+    <div class="hint-ua">🇺🇦 Віднови пропущені слова в тексті.</div>
+    <div class="text-box" id="drugText"></div>
+    <div id="drugFeedback"></div>
+    <div class="btn-row"><button class="btn btn-outline" onclick="checkDrug()">Check</button></div>
+  </div>
+
+  <div style="text-align:center;margin:18px 0">
+    <button class="btn btn-primary" style="font-size:1rem;padding:12px 24px" onclick="calculateScore()">Check all & see my score</button>
+  </div>
+
+  <div class="score-box" id="scoreBox">
+    <div>Your total score</div>
+    <div class="score-num" id="scoreNum">0 / 44</div>
+    <div class="score-pct" id="scorePct">0%</div>
+    <div class="breakdown" id="breakdown"></div>
+    <div id="scoreMsg" style="margin-top:10px;font-weight:600"></div>
+  </div>
+
+  <footer>NMT-Health-hw4 · Health vocabulary</footer>
+</div>
+
+<script>
+const hw = {
+  mc: [
+    { q: "Let me ______ you a nice warm bath and you'll feel a lot better.", options: ["make", "run", "get", "build"], answer: 1 },
+    { q: "When the snake bit Mike in the forest, he knew he was ______ serious danger.", options: ["to", "with", "on", "in"], answer: 3 },
+    { q: "Being ______ an injection wasn't as painful as I thought it was going to be.", options: ["given", "done", "made", "taken"], answer: 0 },
+    { q: "Hello? Yes, I'd like to ______ an appointment for tomorrow with Dr Fletcher, please.", options: ["form", "do", "break", "make"], answer: 3 },
+    { q: "My grandfather's over 95 and is ______ pretty poor health these days.", options: ["on", "to", "with", "in"], answer: 3 },
+    { q: "I was told to ______ the medicine three times a day, before meals.", options: ["take", "eat", "get", "do"], answer: 0 },
+    { q: "I like to ______ fit by going to the gym at least twice a week.", options: ["continue", "make", "keep", "set"], answer: 2 },
+    { q: "Eat your vegetables. They'll ______ you good.", options: ["make", "get", "have", "do"], answer: 3 },
+    { q: "The key to losing weight is to ______ more exercise.", options: ["get", "make", "go", "create"], answer: 0 },
+    { q: "You should try to ______ an alternative to all those sugary snacks you eat.", options: ["make", "find", "take", "do"], answer: 1 },
+    { q: "I'm going to make a real effort to get ______ shape for the summer.", options: ["on", "to", "in", "from"], answer: 2 },
+    { q: "Try spreading something low fat ______ your bread instead of butter.", options: ["in", "through", "around", "on"], answer: 3 }
+  ],
+  circ: [
+    { q: "Tim looks really pale and ______ . I'm worried he might be ill.", options: ["thin", "slim"], answer: 0 },
+    { q: "It's important to eat a ______ diet with lots of vegetables.", options: ["fit", "healthy"], answer: 1 },
+    { q: "After picking the flowers, I noticed I had a ______ all over my hands.", options: ["fever", "rash"], answer: 1 },
+    { q: "When I broke a rib, I had to wear a ______ around my chest.", options: ["bandage", "plaster"], answer: 0 },
+    { q: "Make sure you wash your cut properly so that you don't get a/an ______ .", options: ["infection", "pollution"], answer: 0 },
+    { q: "Half an hour after taking the pill, I began to feel the ______ .", options: ["results", "effects"], answer: 1 },
+    { q: "The doctor walked along the ______ , chatting to all the patients she passed.", options: ["ward", "clinic"], answer: 0 },
+    { q: "Two people have been slightly ______ in an accident on the M1.", options: ["injured", "damaged"], answer: 0 },
+    { q: "It's good for children to get minor ______ , such as colds.", options: ["diseases", "illnesses"], answer: 1 },
+    { q: "The medicine bottle said the recommended ______ was two teaspoons twice a day.", options: ["dose", "fix"], answer: 0 }
+  ],
+  gaps: [
+    { q: "My doctor said I have to stay in bed and gave me a ______ for some medicine.", answer: "prescription" },
+    { q: "You must give me the ______ for that wonderful chocolate cake you made!", answer: "recipe" },
+    { q: "Many rock stars seem to end up in drug ______ .", answer: "therapy" },
+    { q: "Do you think a ______ for cancer will ever be found?", answer: "cure" },
+    { q: "My grandma uses an old-fashioned ______ for her arthritis.", answer: "remedy" },
+    { q: "I lifted my shirt so the doctor could ______ my chest.", answer: "examine" },
+    { q: "Police have begun to ______ the break-in at the hospital.", answer: "investigate" },
+    { q: "My mum's thinking of having an ______ to have her nose straightened.", answer: "operation" },
+    { q: "Dr Key told the old man that he needed ______ on his leg.", answer: "surgery" },
+    { q: "My arm is really ______ and I can't move it.", answer: "sore" },
+    { q: "Mind you don't ______ yourself! Oh, too late. Sorry.", answer: "hurt" },
+    { q: "I had a really bad ______ in my foot so I decided to see a doctor.", answer: "pain" }
+  ],
+  drug: [
+    { id: "d0", answer: "about" },
+    { id: "d1", answer: "to" },
+    { id: "d2", answer: "into" },
+    { id: "d3", answer: "with" },
+    { id: "d4", answer: "about" },
+    { id: "d5", answer: "to" },
+    { id: "d6", answer: "from" },
+    { id: "d7", answer: "from" },
+    { id: "d8", answer: "to" },
+    { id: "d9", answer: "to" }
+  ]
+};
+
+const results = { mc: 0, circ: 0, gaps: 0, drug: 0 };
+
+function norm(s) {
+  return (s || "").trim().toLowerCase().replace(/\s+/g, " ");
+}
+
+function init() {
+  buildMC();
+  buildCirc();
+  buildGaps();
+  buildDrug();
+}
+
+function buildMC() {
+  const box = document.getElementById("mcItems");
+  hw.mc.forEach((item, i) => {
+    let opts = item.options.map((o, oi) =>
+      `<button class="mc-option" data-ex="mc" data-i="${i}" data-oi="${oi}" onclick="selMC(this)">${String.fromCharCode(65+oi)}. ${o}</button>`
+    ).join("");
+    box.innerHTML += `<div style="margin:12px 0">
+      <div><span class="q-num">${i+1}</span>${item.q}</div>
+      ${opts}
+      <div class="feedback" id="fb-mc-${i}"></div>
+      <div class="btn-row"><button class="btn btn-outline" onclick="checkMC(${i})">Check</button></div>
+    </div>`;
+  });
+}
+
+function selMC(btn) {
+  const i = btn.dataset.i;
+  const ex = btn.dataset.ex;
+  document.querySelectorAll(`.mc-option[data-ex="${ex}"][data-i="${i}"]`).forEach(b => b.classList.remove("selected"));
+  btn.classList.add("selected");
+}
+
+function checkMC(i) {
+  const sel = document.querySelector(`.mc-option[data-ex="mc"][data-i="${i}"].selected`);
+  if (!sel) return;
+  const oi = +sel.dataset.oi;
+  const fb = document.getElementById("fb-mc-" + i);
+  if (oi === hw.mc[i].answer) {
+    fb.className = "feedback correct";
+    fb.textContent = "✓ Correct!";
+    sel.classList.add("correct-ans");
+  } else {
+    fb.className = "feedback wrong";
+    fb.textContent = "✗ Wrong";
+    sel.classList.add("wrong-ans");
+  }
+}
+
+function buildCirc() {
+  const box = document.getElementById("circItems");
+  hw.circ.forEach((item, i) => {
+    const parts = item.q.split("______");
+    let btns = item.options.map((o, oi) =>
+      `<button class="choice-btn" data-i="${i}" data-oi="${oi}" onclick="selCirc(this)">${o}</button>`
+    ).join(" / ");
+    box.innerHTML += `<div style="margin:10px 0">
+      <div><span class="q-num">${i+1}</span>${parts[0]}<span class="choice-pair">${btns}</span>${parts[1]||""}</div>
+      <div class="feedback" id="fb-circ-${i}"></div>
+      <div class="btn-row"><button class="btn btn-outline" onclick="checkCirc(${i})">Check</button></div>
+    </div>`;
+  });
+}
+
+function selCirc(btn) {
+  const i = btn.dataset.i;
+  document.querySelectorAll(`.choice-btn[data-i="${i}"]`).forEach(b => b.classList.remove("selected"));
+  btn.classList.add("selected");
+}
+
+function checkCirc(i) {
+  const sel = document.querySelector(`.choice-btn[data-i="${i}"].selected`);
+  if (!sel) return;
+  const oi = +sel.dataset.oi;
+  const fb = document.getElementById("fb-circ-" + i);
+  if (oi === hw.circ[i].answer) {
+    fb.className = "feedback correct";
+    fb.textContent = "✓ Correct!";
+    sel.classList.add("correct");
+  } else {
+    fb.className = "feedback wrong";
+    fb.textContent = "✗ Wrong";
+    sel.classList.add("wrong");
+  }
+}
+
+function buildGaps() {
+  const box = document.getElementById("gapItems");
+  hw.gaps.forEach((item, i) => {
+    const parts = item.q.split("______");
+    box.innerHTML += `<div style="margin:10px 0">
+      <div><span class="q-num">${i+1}</span>${parts[0]}<input class="gap-input" id="gap-${i}" data-answer="${item.answer}">${parts[1]||""}</div>
+      <div class="feedback" id="fb-gap-${i}"></div>
+      <div class="btn-row"><button class="btn btn-outline" onclick="checkGap(${i})">Check</button></div>
+    </div>`;
+  });
+}
+
+function checkGap(i) {
+  const input = document.getElementById("gap-" + i);
+  const user = norm(input.value);
+  const correct = norm(input.dataset.answer);
+  const fb = document.getElementById("fb-gap-" + i);
+  if (user === correct) {
+    fb.className = "feedback correct";
+    fb.textContent = "✓ Correct!";
+  } else {
+    fb.className = "feedback wrong";
+    fb.textContent = "✗ Wrong";
+  }
+}
+
+function buildDrug() {
+  const text = `Many people today are worried <input class="gap-input" id="d0" data-answer="about" style="min-width:70px"> drugs. It seems that more and more people are becoming addicted <input class="gap-input" id="d1" data-answer="to" style="min-width:50px"> substances, such as heroin and cocaine, that damage their health. But what leads people becoming addicts? What makes someone inject a drug <input class="gap-input" id="d2" data-answer="into" style="min-width:50px"> their veins? Is it because of their inability to cope <input class="gap-input" id="d3" data-answer="with" style="min-width:50px"> problems in their everyday lives? One thing is for sure. When we complain <input class="gap-input" id="d4" data-answer="about" style="min-width:70px"> the problems caused by hard drugs, we need <input class="gap-input" id="d5" data-answer="to" style="min-width:50px"> remember that people suffer <input class="gap-input" id="d6" data-answer="from" style="min-width:50px"> all kinds of health problems caused by legal drugs, such as alcohol and tobacco. We would all benefit <input class="gap-input" id="d7" data-answer="from" style="min-width:50px"> more education and the government should attempt <input class="gap-input" id="d8" data-answer="to" style="min-width:50px"> make sure we all know the risks involved.`;
+  // Actually looking at typical cloze for this, the last might be different. Adjusting to common prepositions.
+  // Rebuilding with clearer gaps based on standard text.
+  document.getElementById("drugText").innerHTML = `
+    Many people today are worried <input class="gap-input" id="d0" data-answer="about" style="min-width:70px"> drugs.
+    It seems that more and more people are becoming addicted <input class="gap-input" id="d1" data-answer="to" style="min-width:50px"> substances,
+    such as heroin and cocaine, that damage their health. But what leads
+    <input class="gap-input" id="d2" data-answer="to" style="min-width:50px"> people becoming addicts?
+    What makes someone inject a drug <input class="gap-input" id="d3" data-answer="into" style="min-width:50px"> their veins?
+    Is it because of their inability to cope <input class="gap-input" id="d4" data-answer="with" style="min-width:50px"> problems in their everyday lives?
+    One thing is for sure. When we complain <input class="gap-input" id="d5" data-answer="about" style="min-width:70px"> the problems caused by hard drugs,
+    we need <input class="gap-input" id="d6" data-answer="to" style="min-width:50px"> remember that people suffer
+    <input class="gap-input" id="d7" data-answer="from" style="min-width:50px"> all kinds of health problems caused by legal drugs, such as alcohol and tobacco.
+    We would all benefit <input class="gap-input" id="d8" data-answer="from" style="min-width:50px"> more education
+    and the government should attempt <input class="gap-input" id="d9" data-answer="to" style="min-width:50px"> make sure we all know the risks involved.
+  `;
+}
+
+function checkDrug() {
+  let c = 0;
+  for (let i = 0; i < 10; i++) {
+    const el = document.getElementById("d" + i);
+    if (el && norm(el.value) === norm(el.dataset.answer)) c++;
+  }
+  results.drug = c;
+  document.getElementById("drugFeedback").innerHTML =
+    `<div class="feedback ${c===10?'correct':'wrong'}">${c===10?'✓ All correct!':`✗ ${c}/10 correct`}</div>`;
+}
+
+function countCorrect(prefix, total) {
+  let c = 0;
+  for (let i = 0; i < total; i++) {
+    const fb = document.getElementById("fb-" + prefix + "-" + i);
+    if (fb && fb.classList.contains("correct")) c++;
+  }
+  return c;
+}
+
+function calculateScore() {
+  results.mc = countCorrect("mc", 12);
+  results.circ = countCorrect("circ", 10);
+  results.gaps = countCorrect("gap", 12);
+  if (results.drug === 0) checkDrug();
+
+  const total = results.mc + results.circ + results.gaps + results.drug;
+  const max = 44;
+  const pct = Math.round((total / max) * 100);
+
+  document.getElementById("scoreNum").textContent = `${total} / ${max}`;
+  document.getElementById("scorePct").textContent = `${pct}%`;
+  document.getElementById("breakdown").innerHTML = `
+    <div>1. Choose the correct answer: <strong>${results.mc}/12</strong></div>
+    <div>2. Circle the correct word: <strong>${results.circ}/10</strong></div>
+    <div>3. Complete with the correct word: <strong>${results.gaps}/12</strong></div>
+    <div>4. The Drug Problem (restore text): <strong>${results.drug}/10</strong></div>`;
+
+  let msg = "";
+  if (pct >= 90) msg = "Excellent work! 🌟";
+  else if (pct >= 70) msg = "Good job! Check the mistakes.";
+  else if (pct >= 50) msg = "Not bad – revise the health vocabulary.";
+  else msg = "Look at the collocations and word pairs again.";
+  document.getElementById("scoreMsg").textContent = msg;
+
+  const box = document.getElementById("scoreBox");
+  box.classList.add("visible");
+  box.scrollIntoView({ behavior: "smooth" });
+}
+
+init();
+</script>
+</body>
+</html>

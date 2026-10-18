@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>NMT-Health-hw3</title>
+<style>
+  :root {
+    --green: #2E7D32;
+    --green-light: #4CAF50;
+    --green-dark: #1B5E20;
+    --orange: #F57C00;
+    --orange-light: #FF9800;
+    --bg: #F5F7FA;
+    --text: #212121;
+    --muted: #616161;
+    --border: #E0E0E0;
+    --success: #2E7D32;
+    --error: #C62828;
+    --radius: 12px;
+    --shadow: 0 4px 12px rgba(0,0,0,0.08);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.5;
+    font-size: 16.5px;
+    min-height: 100vh;
+    padding-bottom: 40px;
+  }
+  .app { max-width: 840px; margin: 0 auto; padding: 16px; }
+  header {
+    background: linear-gradient(135deg, var(--green-dark), var(--green));
+    color: white;
+    padding: 18px 20px;
+    border-radius: var(--radius);
+    margin-bottom: 16px;
+    box-shadow: var(--shadow);
+  }
+  header h1 { font-size: 1.35rem; margin-bottom: 4px; }
+  header .meta { font-size: 0.9rem; opacity: 0.9; }
+  .section {
+    background: white;
+    border-radius: var(--radius);
+    padding: 16px;
+    margin-bottom: 14px;
+    box-shadow: var(--shadow);
+  }
+  .section h2 {
+    color: var(--green-dark);
+    font-size: 1.1rem;
+    margin-bottom: 5px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .badge {
+    background: var(--orange);
+    color: white;
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 99px;
+  }
+  .aim { color: var(--muted); font-size: 0.85rem; margin-bottom: 10px; }
+  .hint-ua {
+    background: #FFF8E1;
+    border-left: 4px solid var(--orange);
+    padding: 7px 10px;
+    margin: 6px 0 10px;
+    font-size: 0.84rem;
+    color: #5D4037;
+    border-radius: 0 8px 8px 0;
+  }
+  .q-num {
+    display: inline-block;
+    background: var(--green);
+    color: white;
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    text-align: center;
+    line-height: 22px;
+    font-weight: 700;
+    font-size: 0.78rem;
+    margin-right: 6px;
+  }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 9px 14px;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.88rem;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .btn-primary { background: var(--green); color: white; }
+  .btn-outline { background: white; border: 2px solid var(--green); color: var(--green); }
+  .btn-row { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 8px; }
+  .feedback {
+    margin-top: 5px;
+    padding: 6px 9px;
+    border-radius: 8px;
+    font-weight: 600;
+    display: none;
+    font-size: 0.86rem;
+  }
+  .feedback.correct { background: #E8F5E9; color: var(--success); display: block; }
+  .feedback.wrong { background: #FFEBEE; color: var(--error); display: block; }
+  .gap-input {
+    border: none;
+    border-bottom: 2px solid var(--orange);
+    background: #FFF8E1;
+    padding: 2px 6px;
+    font-size: 0.95rem;
+    min-width: 100px;
+    text-align: center;
+    border-radius: 4px;
+  }
+  .mc-option {
+    display: inline-block;
+    padding: 6px 12px;
+    margin: 3px;
+    border: 2px solid var(--border);
+    border-radius: 8px;
+    background: white;
+    font-size: 0.88rem;
+    cursor: pointer;
+  }
+  .mc-option.selected { border-color: var(--orange); background: #FFF3E0; }
+  .mc-option.correct-ans { border-color: var(--success); background: #E8F5E9; }
+  .mc-option.wrong-ans { border-color: var(--error); background: #FFEBEE; }
+  .word-bank {
+    background: #E8F5E9;
+    padding: 8px;
+    border-radius: 8px;
+    margin: 6px 0;
+    font-weight: 600;
+    line-height: 1.7;
+    font-size: 0.86rem;
+  }
+  .body-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 8px;
+    margin: 10px 0;
+  }
+  .body-item {
+    background: #FAFAFA;
+    border-radius: 8px;
+    padding: 8px;
+    font-size: 0.88rem;
+  }
+  .body-item select {
+    width: 100%;
+    margin-top: 4px;
+    padding: 5px;
+    border-radius: 6px;
+    border: 2px solid var(--border);
+    font-size: 0.85rem;
+  }
+  .score-box {
+    background: linear-gradient(135deg, #E8F5E9, #FFF3E0);
+    border-radius: 12px;
+    padding: 18px;
+    text-align: center;
+    margin-top: 16px;
+    display: none;
+    border: 2px solid var(--green-light);
+  }
+  .score-box.visible { display: block; }
+  .score-num { font-size: 2.2rem; font-weight: 800; color: var(--green-dark); }
+  .score-pct { font-size: 1.2rem; color: var(--orange); font-weight: 700; margin: 4px 0 10px; }
+  .breakdown { text-align: left; margin-top: 10px; font-size: 0.9rem; }
+  .breakdown div { padding: 4px 0; border-bottom: 1px solid #C8E6C9; }
+  footer { text-align: center; color: var(--muted); font-size: 0.8rem; margin-top: 18px; }
+  .para-box {
+    background: #F5F5F5;
+    border-radius: 8px;
+    padding: 10px;
+    margin: 6px 0;
+    font-size: 0.88rem;
+    line-height: 1.45;
+  }
+  .para-box strong { color: var(--green-dark); }
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <h1>NMT-Health-hw3</h1>
+    <div class="meta">Body parts · Compound nouns · Health problems · Reading</div>
+  </header>
+
+  <!-- EX 1 Body parts -->
+  <div class="section">
+    <h2><span class="badge">1</span> Label the body parts</h2>
+    <div class="aim">Match the number to the correct body part. (17 points)</div>
+    <div class="word-bank">ankle · back · calf · cheek · chest · chin · elbow · forehead · heel · hip · jaw · knee · shoulder · thigh · throat · thumb · wrist</div>
+    <div class="hint-ua">🇺🇦 Обери назву частини тіла для кожного номера.</div>
+    <div class="body-grid" id="bodyItems"></div>
+    <div class="btn-row"><button class="btn btn-outline" onclick="checkBody()">Check</button></div>
+    <div class="feedback" id="fb-body"></div>
+  </div>
+
+  <!-- EX 2 Compound nouns health tips -->
+  <div class="section">
+    <h2><span class="badge">2</span> Compound nouns – Health Tips</h2>
+    <div class="aim">Make compound nouns and fill the gaps. (5 points)</div>
+    <div class="word-bank">black + eye · heart + disease · nose + bleed · sun + burn · food + poisoning</div>
+    <div id="tipsItems"></div>
+  </div>
+
+  <!-- EX 3 Reading which paragraph -->
+  <div class="section">
+    <h2><span class="badge">3</span> Reading – Which paragraph?</h2>
+    <div class="aim">Read the texts. Choose A, B or C. (8 points)</div>
+    <div class="para-box"><strong>A</strong> You’ve played the same video game for two hours… sore neck, pains in your back… EyeForcer Smart Glasses… sensors detect if you aren’t sitting in the right position…</div>
+    <div class="para-box"><strong>B</strong> How many times have you touched your phone today? … 2,617 times a day! … bacteria… viruses… wash your hands… keep your own phone clean…</div>
+    <div class="para-box"><strong>C</strong> Have you ever walked in the street while looking down at your smartphone? … ‘smartphone zombie’… broken arms or legs… apps which can lock your phone… traffic lights on the pavement…</div>
+    <div id="readItems"></div>
+  </div>
+
+  <!-- EX 4 Compound nouns (centre, kit…) -->
+  <div class="section">
+    <h2><span class="badge">4</span> Complete the compound nouns</h2>
+    <div class="aim">Use: centre · chair · killer · kit · room (5 points)</div>
+    <div id="comp1Items"></div>
+  </div>
+
+  <!-- EX 5 Health problems -->
+  <div class="section">
+    <h2><span class="badge">5</span> Health problems</h2>
+    <div class="aim">Complete with the words from the box. (7 points)</div>
+    <div class="word-bank">ache · bruise · flu · scratch · sore · swollen · temperature</div>
+    <div id="probItems"></div>
+  </div>
+
+  <!-- EX 6 More compound nouns -->
+  <div class="section">
+    <h2><span class="badge">6</span> More compound nouns</h2>
+    <div class="aim">Complete the compound nouns. (8 points)</div>
+    <div id="comp2Items"></div>
+  </div>
+
+  <div style="text-align:center;margin:18px 0">
+    <button class="btn btn-primary" style="font-size:1rem;padding:12px 24px" onclick="calculateScore()">Check all & see my score</button>
+  </div>
+
+  <div class="score-box" id="scoreBox">
+    <div>Your total score</div>
+    <div class="score-num" id="scoreNum">0 / 50</div>
+    <div class="score-pct" id="scorePct">0%</div>
+    <div class="breakdown" id="breakdown"></div>
+    <div id="scoreMsg" style="margin-top:10px;font-weight:600"></div>
+  </div>
+
+  <footer>NMT-Health-hw3 · Body & Health vocabulary</footer>
+</div>
+
+<script>
+const hw = {
+  body: {
+    // Approximate standard labeling for such diagrams (robot facing slightly side)
+    // 1 toe/heel area, 2 ankle, 3 calf, 4 knee, 5 thigh, 6 hip, 7 thumb, 8 wrist, 9 jaw/chin, 10 forehead, 11 cheek, 12 shoulder, 13 elbow, 14 chest, 15 back, 16 hip side, 17 throat
+    // From typical Classwork robot diagram:
+    answers: {
+      1: "heel",
+      2: "ankle",
+      3: "calf",
+      4: "knee",
+      5: "thigh",
+      6: "hip",
+      7: "thumb",
+      8: "wrist",
+      9: "chin",
+      10: "forehead",
+      11: "cheek",
+      12: "shoulder",
+      13: "elbow",
+      14: "chest",
+      15: "back",
+      16: "hip",
+      17: "throat"
+    },
+    // Note: some diagrams have jaw instead of chin, etc. We'll accept close variants in check.
+    words: ["ankle","back","calf","cheek","chest","chin","elbow","forehead","heel","hip","jaw","knee","shoulder","thigh","throat","thumb","wrist"]
+  },
+  tips: [
+    { q: "A healthy diet and regular exercise help to reduce the chances of suffering ______.", answer: "heart disease" },
+    { q: "When you get ______, it can be a good idea to take a quick cool shower or bath to cool your skin.", answer: "sunburn" },
+    { q: "Some people used to say 'put meat on a ______'. But don't! It can cause an infection.", answer: "black eye" },
+    { q: "When you get ______, it's important to drink water, but don't eat anything for the first few hours.", answer: "food poisoning" },
+    { q: "It's important to breathe through your mouth when you have a ______.", answer: "nosebleed" }
+  ],
+  read: [
+    { q: "the importance of hygiene?", answer: "B" },
+    { q: "a problem caused by a type of entertainment?", answer: "A" },
+    { q: "a problem that could, at first, seem funny?", answer: "C" },
+    { q: "a habit which can have a slow, long-term effect on your body?", answer: "A" },
+    { q: "a problem that already has at least two different technological solutions?", answer: "C" },
+    { q: "a health problem that can pass from one person to another?", answer: "B" },
+    { q: "an invention that makes you move if you're sitting incorrectly?", answer: "A" },
+    { q: "something that can save the lives of people who don't look up?", answer: "C" }
+  ],
+  comp1: [
+    { q: "How often have you pushed somebody in a wheel______ because they couldn't walk?", answer: "chair" },
+    { q: "Is there a health ______ near your house or school? Where is it?", answer: "centre" },
+    { q: "Do you have a first-aid ______ in your house or school? Where?", answer: "kit" },
+    { q: "What do you do to pass the time when you are in a waiting______?", answer: "room" },
+    { q: "Have you ever taken a pain______? What did you take it for?", answer: "killer" }
+  ],
+  probs: [
+    { q: "She can't talk because she's got a ______ throat.", answer: "sore" },
+    { q: "He twisted his ankle badly and now it's ______.", answer: "swollen" },
+    { q: "I hit my arm and now I have a ______. It's purple at the moment.", answer: "bruise" },
+    { q: "38 °C? You've got a high ______.", answer: "temperature" },
+    { q: "It isn't really a cut, just a ______.", answer: "scratch" },
+    { q: "I don't want to eat anything. I've got stomach ______.", answer: "ache" },
+    { q: "It's not just a cold. I think it's ______.", answer: "flu" }
+  ],
+  comp2: [
+    { q: "If you can't walk, we'll find you a wheel______.", answer: "chair" },
+    { q: "Somebody has had an accident. Where's the first-aid ______?", answer: "kit" },
+    { q: "She ate something bad and now she's got food ______.", answer: "poisoning" },
+    { q: "Take a pain______ if your back hurts.", answer: "killer" },
+    { q: "My neighbour is a doctor at the ______ centre down the road.", answer: "health" },
+    { q: "No exercise can cause heart ______.", answer: "disease" },
+    { q: "Don't stay on the beach for a long time. You could get sun______.", answer: "burn" },
+    { q: "The ball hit me in the face and now I have a black ______.", answer: "eye" }
+  ]
+};
+
+const results = { body: 0, tips: 0, read: 0, comp1: 0, probs: 0, comp2: 0 };
+
+function norm(s) {
+  return (s || "").trim().toLowerCase().replace(/\s+/g, " ").replace(/-/g, "");
+}
+
+function init() {
+  buildBody();
+  buildTips();
+  buildRead();
+  buildComp1();
+  buildProbs();
+  buildComp2();
+}
+
+function buildBody() {
+  const box = document.getElementById("bodyItems");
+  const words = hw.body.words.slice().sort();
+  for (let i = 1; i <= 17; i++) {
+    let opts = words.map(w => `<option value="${w}">${w}</option>`).join("");
+    box.innerHTML += `<div class="body-item">
+      <strong>#${i}</strong>
+      <select id="b-${i}"><option value="">—</option>${opts}</select>
+    </div>`;
+  }
+}
+
+function checkBody() {
+  // Accept reasonable answers for common diagram labeling
+  const acceptable = {
+    1: ["heel"],
+    2: ["ankle"],
+    3: ["calf"],
+    4: ["knee"],
+    5: ["thigh"],
+    6: ["hip"],
+    7: ["thumb"],
+    8: ["wrist"],
+    9: ["chin", "jaw"],
+    10: ["forehead"],
+    11: ["cheek"],
+    12: ["shoulder"],
+    13: ["elbow"],
+    14: ["chest"],
+    15: ["back"],
+    16: ["hip", "thigh"],
+    17: ["throat", "jaw"]
+  };
+  let c = 0;
+  for (let i = 1; i <= 17; i++) {
+    const v = norm(document.getElementById("b-" + i).value);
+    if (acceptable[i] && acceptable[i].some(a => norm(a) === v)) c++;
+  }
+  results.body = c;
+  const fb = document.getElementById("fb-body");
+  if (c === 17) { fb.className = "feedback correct"; fb.textContent = "✓ Perfect! 17/17"; }
+  else { fb.className = "feedback wrong"; fb.textContent = `✗ ${c}/17 correct`; }
+}
+
+function buildTips() {
+  const box = document.getElementById("tipsItems");
+  hw.tips.forEach((item, i) => {
+    const parts = item.q.split("______");
+    box.innerHTML += `<div style="margin:10px 0">
+      <div><span class="q-num">${i+1}</span>${parts[0]}<input class="gap-input" id="tip-${i}" data-a="${item.answer}" style="min-width:120px">${parts[1]||""}</div>
+      <div class="feedback" id="fb-tip-${i}"></div>
+      <div class="btn-row"><button class="btn btn-outline" onclick="checkTip(${i})">Check</button></div>
+    </div>`;
+  });
+}
+
+function checkTip(i) {
+  const user = norm(document.getElementById("tip-" + i).value);
+  const ans = norm(hw.tips[i].answer);
+  const fb = document.getElementById("fb-tip-" + i);
+  // accept sun burn / sunburn, nose bleed / nosebleed etc.
+  const alt = ans.replace(" ", "");
+  if (user === ans || user === alt || user === ans.replace(" ", "-")) {
+    fb.className = "feedback correct";
+    fb.textContent = "✓ Correct!";
+  } else {
+    fb.className = "feedback wrong";
+    fb.textContent = "✗ Wrong";
+  }
+}
+
+function buildRead() {
+  const box = document.getElementById("readItems");
+  hw.read.forEach((item, i) => {
+    box.innerHTML += `<div style="margin:10px 0">
+      <div><span class="q-num">${i+1}</span> ${item.q}</div>
+      <button class="mc-option" data-i="${i}" data-v="A" onclick="selRead(this)">A</button>
+      <button class="mc-option" data-i="${i}" data-v="B" onclick="selRead(this)">B</button>
+      <button class="mc-option" data-i="${i}" data-v="C" onclick="selRead(this)">C</button>
+      <div class="feedback" id="fb-r-${i}"></div>
+      <div class="btn-row"><button class="btn btn-outline" onclick="checkRead(${i})">Check</button></div>
+    </div>`;
+  });
+}
+
+function selRead(btn) {
+  const i = btn.dataset.i;
+  document.querySelectorAll(`.mc-option[data-i="${i}"]`).forEach(b => b.classList.remove("selected"));
+  btn.classList.add("selected");
+}
+
+function checkRead(i) {
+  const sel = document.querySelector(`.mc-option[data-i="${i}"].selected`);
+  if (!sel) return;
+  const fb = document.getElementById("fb-r-" + i);
+  if (sel.dataset.v === hw.read[i].answer) {
+    fb.className = "feedback correct";
+    fb.textContent = "✓ Correct!";
+    sel.classList.add("correct-ans");
+  } else {
+    fb.className = "feedback wrong";
+    fb.textContent = "✗ Wrong";
+    sel.classList.add("wrong-ans");
+  }
+}
+
+function buildComp1() {
+  const box = document.getElementById("comp1Items");
+  hw.comp1.forEach((item, i) => {
+    const parts = item.q.split("______");
+    // handle the gap position
+    let html = item.q.replace("______", `<input class="gap-input" id="c1-${i}" data-a="${item.answer}" style="min-width:80px">`);
+    // special for wheel______ and pain______
+    if (item.q.includes("wheel")) html = item.q.replace("wheel______", `wheel<input class="gap-input" id="c1-${i}" data-a="${item.answer}" style="min-width:70px">`);
+    if (item.q.includes("pain")) html = item.q.replace("pain______", `pain<input class="gap-input" id="c1-${i}" data-a="${item.answer}" style="min-width:70px">`);
+    if (item.q.includes("waiting")) html = item.q.replace("waiting______", `waiting<input class="gap-input" id="c1-${i}" data-a="${item.answer}" style="min-width:70px">`);
+    box.innerHTML += `<div style="margin:10px 0">
+      <div><span class="q-num">${i+1}</span>${html}</div>
+      <div class="feedback" id="fb-c1-${i}"></div>
+      <div class="btn-row"><button class="btn btn-outline" onclick="checkC1(${i})">Check</button></div>
+    </div>`;
+  });
+}
+
+function checkC1(i) {
+  const user = norm(document.getElementById("c1-" + i).value);
+  const ans = norm(hw.comp1[i].answer);
+  const fb = document.getElementById("fb-c1-" + i);
+  if (user === ans) {
+    fb.className = "feedback correct";
+    fb.textContent = "✓ Correct!";
+  } else {
+    fb.className = "feedback wrong";
+    fb.textContent = "✗ Wrong";
+  }
+}
+
+function buildProbs() {
+  const box = document.getElementById("probItems");
+  hw.probs.forEach((item, i) => {
+    const html = item.q.replace("______", `<input class="gap-input" id="p-${i}" data-a="${item.answer}">`);
+    box.innerHTML += `<div style="margin:10px 0">
+      <div><span class="q-num">${i+1}</span>${html}</div>
+      <div class="feedback" id="fb-p-${i}"></div>
+      <div class="btn-row"><button class="btn btn-outline" onclick="checkP(${i})">Check</button></div>
+    </div>`;
+  });
+}
+
+function checkP(i) {
+  const user = norm(document.getElementById("p-" + i).value);
+  const ans = norm(hw.probs[i].answer);
+  const fb = document.getElementById("fb-p-" + i);
+  if (user === ans) {
+    fb.className = "feedback correct";
+    fb.textContent = "✓ Correct!";
+  } else {
+    fb.className = "feedback wrong";
+    fb.textContent = "✗ Wrong";
+  }
+}
+
+function buildComp2() {
+  const box = document.getElementById("comp2Items");
+  hw.comp2.forEach((item, i) => {
+    let html = item.q;
+    if (html.includes("wheel______")) html = html.replace("wheel______", `wheel<input class="gap-input" id="c2-${i}" data-a="${item.answer}" style="min-width:70px">`);
+    else if (html.includes("pain______")) html = html.replace("pain______", `pain<input class="gap-input" id="c2-${i}" data-a="${item.answer}" style="min-width:70px">`);
+    else if (html.includes("sun______")) html = html.replace("sun______", `sun<input class="gap-input" id="c2-${i}" data-a="${item.answer}" style="min-width:70px">`);
+    else html = html.replace("______", `<input class="gap-input" id="c2-${i}" data-a="${item.answer}" style="min-width:90px">`);
+    box.innerHTML += `<div style="margin:10px 0">
+      <div><span class="q-num">${i+1}</span>${html}</div>
+      <div class="feedback" id="fb-c2-${i}"></div>
+      <div class="btn-row"><button class="btn btn-outline" onclick="checkC2(${i})">Check</button></div>
+    </div>`;
+  });
+}
+
+function checkC2(i) {
+  const user = norm(document.getElementById("c2-" + i).value);
+  const ans = norm(hw.comp2[i].answer);
+  const fb = document.getElementById("fb-c2-" + i);
+  if (user === ans || (ans === "burn" && user === "burn") || (ans === "eye" && user === "eye")) {
+    fb.className = "feedback correct";
+    fb.textContent = "✓ Correct!";
+  } else {
+    fb.className = "feedback wrong";
+    fb.textContent = "✗ Wrong";
+  }
+}
+
+function countCorrect(prefix, total) {
+  let c = 0;
+  for (let i = 0; i < total; i++) {
+    const fb = document.getElementById("fb-" + prefix + "-" + i);
+    if (fb && fb.classList.contains("correct")) c++;
+  }
+  return c;
+}
+
+function calculateScore() {
+  if (results.body === 0) checkBody();
+  results.tips = countCorrect("tip", 5);
+  results.read = countCorrect("r", 8);
+  results.comp1 = countCorrect("c1", 5);
+  results.probs = countCorrect("p", 7);
+  results.comp2 = countCorrect("c2", 8);
+
+  const total = results.body + results.tips + results.read + results.comp1 + results.probs + results.comp2;
+  const max = 50;
+  const pct = Math.round((total / max) * 100);
+
+  document.getElementById("scoreNum").textContent = `${total} / ${max}`;
+  document.getElementById("scorePct").textContent = `${pct}%`;
+  document.getElementById("breakdown").innerHTML = `
+    <div>1. Body parts: <strong>${results.body}/17</strong></div>
+    <div>2. Compound nouns – Health Tips: <strong>${results.tips}/5</strong></div>
+    <div>3. Reading – Which paragraph?: <strong>${results.read}/8</strong></div>
+    <div>4. Compound nouns (centre/kit…): <strong>${results.comp1}/5</strong></div>
+    <div>5. Health problems: <strong>${results.probs}/7</strong></div>
+    <div>6. More compound nouns: <strong>${results.comp2}/8</strong></div>`;
+
+  let msg = "";
+  if (pct >= 90) msg = "Excellent work! 🌟";
+  else if (pct >= 70) msg = "Good job! Check the mistakes.";
+  else if (pct >= 50) msg = "Not bad – revise body parts and compounds.";
+  else msg = "Look at the vocabulary lists again.";
+  document.getElementById("scoreMsg").textContent = msg;
+
+  const box = document.getElementById("scoreBox");
+  box.classList.add("visible");
+  box.scrollIntoView({ behavior: "smooth" });
+}
+
+init();
+</script>
+</body>
+</html>
