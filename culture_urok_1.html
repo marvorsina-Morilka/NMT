@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Culture · Урок 1</title>
+<style>
+:root{--p:#6a1b9a;--pd:#4a148c;--ok:#2e7d32;--err:#c62828;--bg:#f3e5f5;--card:#fff;--bd:#ce93d8;--t:#1a1a2e;--m:#6a1b9a}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--t);line-height:1.55;font-size:16.5px;padding:16px}
+.wrap{max-width:920px;margin:0 auto}
+header{background:linear-gradient(135deg,var(--p),var(--pd));color:#fff;padding:22px 24px;border-radius:14px;margin-bottom:20px;box-shadow:0 6px 18px rgba(106,27,154,.3)}
+header h1{font-size:1.25rem;margin-bottom:4px}
+header p{opacity:.93;font-size:.92rem}
+.badge{display:inline-block;background:rgba(255,255,255,.22);padding:3px 11px;border-radius:16px;font-size:.8rem;margin-bottom:8px}
+.ex{background:var(--card);border-radius:14px;padding:22px;margin-bottom:18px;box-shadow:0 3px 12px rgba(0,0,0,.06);border:1px solid var(--bd)}
+.ex h2{color:var(--pd);font-size:1.08rem;margin-bottom:6px;display:flex;align-items:center;gap:8px}
+.ex h2 .n{background:var(--p);color:#fff;width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.9rem;flex-shrink:0}
+.inst{color:var(--m);font-size:.9rem;margin-bottom:12px}
+.s{margin-bottom:11px;line-height:1.7}
+.txt{background:#fafafa;border-radius:10px;padding:14px;margin:10px 0;font-size:.9rem;border:1px solid #eee;line-height:1.7}
+select{font-family:inherit;font-size:.88rem;padding:5px 8px;border:2px solid var(--bd);border-radius:8px;background:#fff;min-width:160px}
+select:focus{outline:none;border-color:var(--p);box-shadow:0 0 0 3px rgba(106,27,154,.12)}
+select.ok{border-color:var(--ok);background:#e8f5e9}
+select.bad{border-color:var(--err);background:#ffebee}
+.btn-r{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
+button{font-family:inherit;font-size:.92rem;font-weight:600;padding:9px 18px;border:none;border-radius:10px;cursor:pointer}
+.bc{background:var(--p);color:#fff}.bc:hover{background:var(--pd)}
+.br{background:#e1bee7;color:var(--m)}
+.bt{background:linear-gradient(135deg,#2e7d32,#1b5e20);color:#fff;font-size:1.02rem;padding:13px 26px}
+.fb{margin-top:12px;padding:11px 14px;border-radius:10px;font-weight:500;display:none}
+.fb.show{display:block}
+.fb.ok{background:#e8f5e9;color:var(--ok);border:1px solid #a5d6a7}
+.fb.bad{background:#ffebee;color:var(--err);border:1px solid #ef9a9a}
+.sc{font-size:1.08rem;font-weight:700}
+.tot{background:var(--card);border-radius:14px;padding:28px;margin-bottom:18px;border:2px solid var(--p);text-align:center}
+.tot h2{font-size:1.2rem;color:var(--pd);margin-bottom:6px}
+.tot .h{color:var(--m);font-size:.9rem;margin-bottom:16px}
+.td{display:none;margin-top:16px;padding:20px;border-radius:12px;font-size:1.1rem}
+.td.show{display:block}
+.td.good{background:#e8f5e9;border:2px solid #a5d6a7;color:var(--ok)}
+.td.mid{background:#fff8e1;border:2px solid #ffe082;color:#f57f17}
+.td.bad{background:#ffebee;border:2px solid #ef9a9a;color:var(--err)}
+.big{font-size:2.2rem;font-weight:800;margin:6px 0 2px}
+.bd{margin-top:14px;font-size:.92rem;text-align:left;max-width:420px;margin-left:auto;margin-right:auto}
+.bd div{display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px dashed rgba(0,0,0,.1)}
+.quote{background:#f3e5f5;border-left:4px solid var(--p);padding:12px 14px;margin:12px 0;font-style:italic;border-radius:0 8px 8px 0}
+footer{text-align:center;color:var(--m);font-size:.82rem;padding:8px 0 24px}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <div class="badge">Culture · Lesson 1</div>
+  <h1>Culture · Урок 1</h1>
+  <p>How Anime Took Over America · The Story Behind Banksy</p>
+</header>
+
+<!-- EX 1 Anime gaps -->
+<div class="ex" id="ex1">
+  <h2><span class="n">1</span> How Anime Took Over America</h2>
+  <p class="inst">Оберіть правильний варіант A–D. <strong>(5 балів)</strong></p>
+  <div class="txt">
+    Anime’s style is largely inherited from the world of manga, a type of serialized comic (1)
+    <select id="a1"><option value="">—</option><option value="A">A) published</option><option value="B">B) publishing</option><option value="C">C) been published</option><option value="D">D) publish</option></select>
+    in magazine form. Many hit anime series and films have been adapted from the pages of Weekly Shōnen Jump, which, at its peak circulation in (2)
+    <select id="a2"><option value="">—</option><option value="A">A) the 90th</option><option value="B">B) the 90s</option><option value="C">C) 90s</option><option value="D">D) 90</option></select>,
+    had over six (3)
+    <select id="a3"><option value="">—</option><option value="A">A) six millions</option><option value="B">B) six million’s</option><option value="C">C) six million</option><option value="D">D) six’s million</option></select>
+    readers — many of them (4)
+    <select id="a4"><option value="">—</option><option value="A">A) adult</option><option value="B">B) adolescent</option><option value="C">C) adolescence</option><option value="D">D) adulthood</option></select>
+    boys like those who appear doing (5)
+    <select id="a5"><option value="">—</option><option value="A">A) martial</option><option value="B">B) marital</option><option value="C">C) married</option><option value="D">D) mature</option></select>
+    arts on its iconic covers.
+  </div>
+  <div class="btn-r">
+    <button class="bc" onclick="chk('a',Ans.a,5,'f1','e1')">Перевірити</button>
+    <button class="br" onclick="rst('a',[1,2,3,4,5],'f1','e1')">Скинути</button>
+  </div>
+  <div class="fb" id="f1"></div>
+</div>
+
+<!-- EX 2 Banksy reading -->
+<div class="ex" id="ex2">
+  <h2><span class="n">2</span> The Story Behind Banksy · reading</h2>
+  <p class="inst">Прочитайте текст і оберіть відповіді. <strong>(5 балів)</strong></p>
+  <div class="txt">
+    Banksy is an anonymous England-based street artist, vandal, political activist, and film director. His satirical street art and subversive epigrams combine dark humor with graffiti executed in a distinctive stenciling technique. His works of political and social commentary have been featured on streets, walls, and bridges of cities throughout the world. Banksy’s work grew out of the Bristol underground scene, which involved collaborations between artists and musicians. Banksy says that he was inspired by 3D, a graffiti artist who later became a founding member of the English musical group Massive Attack.<br><br>
+    Banksy displays his art on publicly visible surfaces such as walls and self-built physical prop pieces. Banksy does not sell photographs or reproductions of his street graffiti, but art auctioneers have been known to attempt to sell his street art on location and leave the problem of its removal in the hands of the winning bidder.
+  </div>
+  <div class="quote">“Graffiti is one of the few tools you have if you have almost nothing.” — Banksy, Artist</div>
+  <div class="s">1. What is Banksy’s real name?
+    <select id="b1"><option value="">—</option><option value="C">C) He’s anonymous</option><option value="A">A) Bristol</option><option value="B">B) 3D</option></select>
+  </div>
+  <div class="s">2. Banksy is a…
+    <select id="b2"><option value="">—</option><option value="C">C) both A and B</option><option value="A">A) street artist</option><option value="B">B) political activist</option></select>
+  </div>
+  <div class="s">3. What was the Bristol underground scene?
+    <select id="b3"><option value="">—</option><option value="A">A) An art and music movement</option><option value="B">B) A former subway line</option><option value="C">C) A style of graffiti</option></select>
+  </div>
+  <div class="s">4. Where does Banksy display his works?
+    <select id="b4"><option value="">—</option><option value="B">B) In publicly visible places</option><option value="A">A) In museums</option><option value="C">C) He doesn’t display them</option></select>
+  </div>
+  <div class="s">5. How does Banksy sell his artwork?
+    <select id="b5"><option value="">—</option><option value="A">A) He doesn’t sell it</option><option value="B">B) An agent sells it</option><option value="C">C) Art auctioneers sell it</option></select>
+  </div>
+  <div class="btn-r">
+    <button class="bc" onclick="chk('b',Ans.b,5,'f2','e2')">Перевірити</button>
+    <button class="br" onclick="rst('b',[1,2,3,4,5],'f2','e2')">Скинути</button>
+  </div>
+  <div class="fb" id="f2"></div>
+</div>
+
+<!-- TOTAL -->
+<div class="tot">
+  <h2>📝 Підсумок</h2>
+  <p class="h">Спочатку перевірте кожну вправу, потім натисніть кнопку.</p>
+  <button class="bt" onclick="total()">Порахувати загальний бал</button>
+  <div class="td" id="td"></div>
+</div>
+
+<footer>Culture · Урок 1 · Anime &amp; Banksy<br>Максимум: <strong>10 балів</strong></footer>
+</div>
+
+<script>
+const Ans = {
+  a:{1:'A',2:'B',3:'C',4:'B',5:'A'},
+  b:{1:'C',2:'C',3:'A',4:'B',5:'A'}
+};
+const S = {e1:null,e2:null};
+
+function chk(pre,ans,tot,fid,key){
+  let c=0;
+  for(const[k,v] of Object.entries(ans)){
+    const el=document.getElementById(pre+k);
+    if(!el) continue;
+    el.classList.remove('ok','bad');
+    if(el.value===v){el.classList.add('ok');c++;}
+    else if(el.value) el.classList.add('bad');
+  }
+  S[key]={c,t:tot};
+  const fb=document.getElementById(fid);
+  fb.classList.add('show');
+  if(c===tot){fb.className='fb show ok';fb.innerHTML='✅ Чудово! '+c+' / '+tot;}
+  else{fb.className='fb show bad';fb.innerHTML='Результат: <span class="sc">'+c+' / '+tot+'</span>. Перевірте червоні поля.';}
+}
+function rst(pre,keys,fid,key){
+  keys.forEach(k=>{const el=document.getElementById(pre+k);if(el){el.value='';el.classList.remove('ok','bad');}});
+  document.getElementById(fid).className='fb';S[key]=null;
+  document.getElementById('td').className='td';document.getElementById('td').innerHTML='';
+}
+function total(){
+  if(!S.e1) chk('a',Ans.a,5,'f1','e1');
+  if(!S.e2) chk('b',Ans.b,5,'f2','e2');
+  const s1=S.e1.c,s2=S.e2.c;
+  const tot=s1+s2, max=10, pct=Math.round(tot/max*100);
+  const box=document.getElementById('td');
+  let cls,msg;
+  if(pct>=80){cls='good';msg='Відмінно! 🎉';}
+  else if(pct>=50){cls='mid';msg='Добре, перечитайте тексти ще раз.';}
+  else{cls='bad';msg='Потрібно ще потренувати reading.';}
+  box.className='td show '+cls;
+  box.innerHTML='<div>'+msg+'</div><div class="big">'+tot+' / '+max+'</div><div>'+pct+'%</div><div class="bd"><div><span>1. Anime gap fill</span><span>'+s1+' / 5</span></div><div><span>2. Banksy reading</span><span>'+s2+' / 5</span></div></div>';
+}
+</script>
+</body>
+</html>
