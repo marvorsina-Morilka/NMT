@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Culture · Урок 2</title>
+<style>
+:root{--p:#00838f;--pd:#006064;--ok:#2e7d32;--err:#c62828;--bg:#e0f7fa;--card:#fff;--bd:#80deea;--t:#1a1a2e;--m:#00838f}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--t);line-height:1.55;font-size:16px;padding:16px}
+.wrap{max-width:940px;margin:0 auto}
+header{background:linear-gradient(135deg,var(--p),var(--pd));color:#fff;padding:22px 24px;border-radius:14px;margin-bottom:20px;box-shadow:0 6px 18px rgba(0,131,143,.3)}
+header h1{font-size:1.2rem;margin-bottom:4px}
+header p{opacity:.93;font-size:.92rem}
+.badge{display:inline-block;background:rgba(255,255,255,.22);padding:3px 11px;border-radius:16px;font-size:.8rem;margin-bottom:8px}
+.ex{background:var(--card);border-radius:14px;padding:20px;margin-bottom:16px;box-shadow:0 3px 12px rgba(0,0,0,.06);border:1px solid var(--bd)}
+.ex h2{color:var(--pd);font-size:1.05rem;margin-bottom:6px;display:flex;align-items:center;gap:8px}
+.ex h2 .n{background:var(--p);color:#fff;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.85rem;flex-shrink:0}
+.inst{color:var(--m);font-size:.88rem;margin-bottom:10px}
+.wb{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+.wt{background:#e0f7fa;color:var(--pd);padding:3px 10px;border-radius:14px;font-size:.8rem;font-weight:500;border:1px solid #80deea}
+.s{margin-bottom:10px;line-height:1.65;font-size:.92rem}
+.txt{background:#f5f5f5;border-radius:10px;padding:12px;margin:8px 0;font-size:.88rem;border:1px solid #ddd;line-height:1.65;max-height:220px;overflow-y:auto}
+select{font-family:inherit;font-size:.85rem;padding:5px 8px;border:2px solid var(--bd);border-radius:8px;background:#fff;min-width:150px;max-width:100%}
+select:focus{outline:none;border-color:var(--p)}
+select.ok{border-color:var(--ok);background:#e8f5e9}
+select.bad{border-color:var(--err);background:#ffebee}
+.btn-r{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px}
+button{font-family:inherit;font-size:.9rem;font-weight:600;padding:9px 18px;border:none;border-radius:10px;cursor:pointer}
+.bc{background:var(--p);color:#fff}.bc:hover{background:var(--pd)}
+.br{background:#b2ebf2;color:var(--m)}
+.bt{background:linear-gradient(135deg,#2e7d32,#1b5e20);color:#fff;font-size:1rem;padding:13px 26px}
+.fb{margin-top:10px;padding:10px 14px;border-radius:10px;font-weight:500;display:none}
+.fb.show{display:block}
+.fb.ok{background:#e8f5e9;color:var(--ok);border:1px solid #a5d6a7}
+.fb.bad{background:#ffebee;color:var(--err);border:1px solid #ef9a9a}
+.sc{font-size:1.05rem;font-weight:700}
+.tot{background:var(--card);border-radius:14px;padding:28px;margin-bottom:18px;border:2px solid var(--p);text-align:center}
+.tot h2{font-size:1.15rem;color:var(--pd);margin-bottom:6px}
+.tot .h{color:var(--m);font-size:.9rem;margin-bottom:16px}
+.td{display:none;margin-top:16px;padding:20px;border-radius:12px;font-size:1.05rem}
+.td.show{display:block}
+.td.good{background:#e8f5e9;border:2px solid #a5d6a7;color:var(--ok)}
+.td.mid{background:#fff8e1;border:2px solid #ffe082;color:#f57f17}
+.td.bad{background:#ffebee;border:2px solid #ef9a9a;color:var(--err)}
+.big{font-size:2.1rem;font-weight:800;margin:6px 0 2px}
+.bd{margin-top:12px;font-size:.88rem;text-align:left;max-width:460px;margin-left:auto;margin-right:auto}
+.bd div{display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px dashed rgba(0,0,0,.1)}
+footer{text-align:center;color:var(--m);font-size:.8rem;padding:8px 0 24px}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <div class="badge">Culture · Lesson 2</div>
+  <h1>Culture · Урок 2</h1>
+  <p>Ephemeral Art · Streaming · Media vocabulary</p>
+</header>
+
+<!-- EX 1 Ephemeral Art -->
+<div class="ex" id="ex1">
+  <h2><span class="n">1</span> Ephemeral Art · reading</h2>
+  <p class="inst">Прочитайте і оберіть відповіді. <strong>(5 балів)</strong></p>
+  <div class="txt">
+    <strong>Ephemeral Art — Here today, gone tomorrow</strong><br>
+    What does ‘ephemeral’ mean? It is used to describe something that only lasts for a short time — like a mayfly, or a pleasure that passes. It is also a genre of art: how can you study art that is here today and gone tomorrow?<br>
+    Ephemeral art is not about pictures kept in a gallery. It came to prominence in the 1950s. One interpretation is that it promotes awareness of how quickly life changes. Tibetan monks create sand mandalas that are blown away in days.<br>
+    Some artists use materials that self-destruct. Andy Goldsworthy made a ribbon of poppy petals held by saliva. In 2014, Néle Azevedo made 5,000 tiny ice figures that melted — a memorial that later became a symbol of climate change.<br>
+    Dutch artist Smilde created a perfect cloud indoors that lasted seconds — spectators experienced humidity and smoke, not just a photo.<br>
+    Street art, 3D pavement art and sand sculpture are other forms. Graffiti is ephemeral because it is unprotected. In modern society ephemeral art can provoke reactions, raise awareness or simply give pleasure.
+  </div>
+  <div class="s">1. The writer mentions a mayfly in order to
+    <select id="a1"><option value="">—</option><option value="C">C) help explain the meaning of a word</option><option value="A">A) describe the beauty of an insect</option><option value="B">B) give a typical example of an art form</option><option value="D">D) show us the joys of looking at nature</option></select>
+  </div>
+  <div class="s">2. Some people think that ephemeral art tries to
+    <select id="a2"><option value="">—</option><option value="D">D) point out the shortness of life</option><option value="A">A) make us think about the importance of living well</option><option value="B">B) teach us about nature</option><option value="C">C) show us that art should not be enclosed in galleries</option></select>
+  </div>
+  <div class="s">3. In Paragraph 3 the writer suggests that ephemeral art
+    <select id="a3"><option value="">—</option><option value="B">B) sometimes communicates a different idea than the artist intended</option><option value="A">A) is sometimes destroyed because it’s in a public place</option><option value="C">C) can last for many years longer than planned</option><option value="D">D) is made with environmentally-friendly materials</option></select>
+  </div>
+  <div class="s">4. Why does the writer give the example of Smilde’s ‘Cloud’?
+    <select id="a4"><option value="">—</option><option value="C">C) because it gave the spectators more than a beautiful image</option><option value="A">A) because it was very difficult to create</option><option value="B">B) because it was captured on a photograph</option><option value="D">D) because it had a philosophical message</option></select>
+  </div>
+  <div class="s">5. The writer believes that ephemeral art
+    <select id="a5"><option value="">—</option><option value="C">C) has many different functions</option><option value="A">A) is typical of modern society</option><option value="B">B) should have a real home</option><option value="D">D) is something all of us can do</option></select>
+  </div>
+  <div class="btn-r">
+    <button class="bc" onclick="chk('a',Ans.a,5,'f1','e1')">Перевірити</button>
+    <button class="br" onclick="rst('a',[1,2,3,4,5],'f1','e1')">Скинути</button>
+  </div>
+  <div class="fb" id="f1"></div>
+</div>
+
+<!-- EX 2 Streaming vocab 1 -->
+<div class="ex" id="ex2">
+  <h2><span class="n">2</span> Streaming vocabulary · set 1</h2>
+  <p class="inst">Оберіть слово з рамки. <strong>(7 балів)</strong></p>
+  <div class="wb">
+    <span class="wt">binge-watching</span><span class="wt">on-demand content</span>
+    <span class="wt">screen time</span><span class="wt">series</span>
+    <span class="wt">spoilers</span><span class="wt">streaming service</span>
+    <span class="wt">viewers</span>
+  </div>
+  <div class="s">2. The content is getting boring, so
+    <select id="b1"><option value="">—</option><option value="viewers">viewers</option><option value="series">series</option><option value="spoilers">spoilers</option><option value="screen time">screen time</option></select>
+    are starting to watch different series.
+  </div>
+  <div class="s">3. We try to limit our
+    <select id="b2"><option value="">—</option><option value="screen time">screen time</option><option value="binge-watching">binge-watching</option><option value="viewers">viewers</option><option value="spoilers">spoilers</option></select>
+    to a few hours per day.
+  </div>
+  <div class="s">4. My brother is terrible for
+    <select id="b3"><option value="">—</option><option value="binge-watching">binge-watching</option><option value="screen time">screen time</option><option value="spoilers">spoilers</option><option value="series">series</option></select>
+    – he can watch an entire series in two days!
+  </div>
+  <div class="s">5. I think this
+    <select id="b4"><option value="">—</option><option value="streaming service">streaming service</option><option value="series">series</option><option value="viewers">viewers</option><option value="spoilers">spoilers</option></select>
+    is really great. I’m happy to pay for it.
+  </div>
+  <div class="s">6. Don’t read Matt’s blog – it’s full of
+    <select id="b5"><option value="">—</option><option value="spoilers">spoilers</option><option value="viewers">viewers</option><option value="series">series</option><option value="screen time">screen time</option></select>.
+  </div>
+  <div class="s">7. My parents didn’t have
+    <select id="b6"><option value="">—</option><option value="on-demand content">on-demand content</option><option value="spoilers">spoilers</option><option value="viewers">viewers</option><option value="series">series</option></select>
+    when they were young.
+  </div>
+  <div class="s">8. My mum has been watching this
+    <select id="b7"><option value="">—</option><option value="series">series</option><option value="viewers">viewers</option><option value="spoilers">spoilers</option><option value="screen time">screen time</option></select>
+    for years.
+  </div>
+  <div class="btn-r">
+    <button class="bc" onclick="chk('b',Ans.b,7,'f2','e2')">Перевірити</button>
+    <button class="br" onclick="rst('b',[1,2,3,4,5,6,7],'f2','e2')">Скинути</button>
+  </div>
+  <div class="fb" id="f2"></div>
+</div>
+
+<!-- EX 3 Streaming set 2 -->
+<div class="ex" id="ex3">
+  <h2><span class="n">3</span> Streaming vocabulary · set 2</h2>
+  <p class="inst">Оберіть слово з рамки. <strong>(7 балів)</strong></p>
+  <div class="wb">
+    <span class="wt">binge-watching</span><span class="wt">credits</span><span class="wt">eagerly-awaited</span>
+    <span class="wt">little-known</span><span class="wt">season</span><span class="wt">spoilers</span>
+    <span class="wt">subtitles</span>
+  </div>
+  <div class="s">2. Don’t tell me how the series ends – I hate
+    <select id="c1"><option value="">—</option><option value="spoilers">spoilers</option><option value="credits">credits</option><option value="season">season</option><option value="subtitles">subtitles</option></select>!
+  </div>
+  <div class="s">3. Frances says that the next
+    <select id="c2"><option value="">—</option><option value="season">season</option><option value="credits">credits</option><option value="spoilers">spoilers</option><option value="subtitles">subtitles</option></select>
+    of Doctors at War has already come out in America.
+  </div>
+  <div class="s">4. Could you put on the
+    <select id="c3"><option value="">—</option><option value="subtitles">subtitles</option><option value="credits">credits</option><option value="season">season</option><option value="spoilers">spoilers</option></select>?
+    I can’t hear the dialogue very well.
+  </div>
+  <div class="s">5. I want to wait for the
+    <select id="c4"><option value="">—</option><option value="credits">credits</option><option value="season">season</option><option value="spoilers">spoilers</option><option value="subtitles">subtitles</option></select>
+    to see what the actor’s name is.
+  </div>
+  <div class="s">6. She’s a(n)
+    <select id="c5"><option value="">—</option><option value="little-known">little-known</option><option value="eagerly-awaited">eagerly-awaited</option><option value="spoilers">spoilers</option><option value="credits">credits</option></select>
+    actress who is just beginning her career.
+  </div>
+  <div class="s">7. I feel exhausted because I was up all night
+    <select id="c6"><option value="">—</option><option value="binge-watching">binge-watching</option><option value="credits">credits</option><option value="season">season</option><option value="subtitles">subtitles</option></select>
+    the last season of Pretty Little Liars.
+  </div>
+  <div class="s">8. Tomorrow night, fans can watch the
+    <select id="c7"><option value="">—</option><option value="eagerly-awaited">eagerly-awaited</option><option value="little-known">little-known</option><option value="credits">credits</option><option value="spoilers">spoilers</option></select>
+    first episode of the new season.
+  </div>
+  <div class="btn-r">
+    <button class="bc" onclick="chk('c',Ans.c,7,'f3','e3')">Перевірити</button>
+    <button class="br" onclick="rst('c',[1,2,3,4,5,6,7],'f3','e3')">Скинути</button>
+  </div>
+  <div class="fb" id="f3"></div>
+</div>
+
+<!-- EX 4 Match definitions -->
+<div class="ex" id="ex4">
+  <h2><span class="n">4</span> Match the words to the definitions</h2>
+  <p class="inst">Зіставте слово з визначенням. <strong>(10 балів)</strong></p>
+  <div class="s">1. breaking news →
+    <select id="d1"><option value="">—</option><option value="d">d) very recent news heard for the first time</option><option value="a">a) a person who reads the news</option><option value="f">f) dialogue written on a screen</option><option value="j">j) film which is not a success</option></select>
+  </div>
+  <div class="s">2. subtitles →
+    <select id="d2"><option value="">—</option><option value="f">f) dialogue written on a screen</option><option value="a">a) a person who reads the news</option><option value="b">b) the space where actors perform</option><option value="d">d) very recent news</option></select>
+  </div>
+  <div class="s">3. abstract →
+    <select id="d3"><option value="">—</option><option value="i">i) not obvious, concrete or realistic</option><option value="c">c) which is not like anything else</option><option value="e">e) confusing, difficult to understand</option><option value="h">h) practise for a performance</option></select>
+  </div>
+  <div class="s">4. audition →
+    <select id="d4"><option value="">—</option><option value="g">g) perform in order to get a part</option><option value="h">h) practise for a performance</option><option value="b">b) the space where actors perform</option><option value="j">j) film which is not a success</option></select>
+  </div>
+  <div class="s">5. stage →
+    <select id="d5"><option value="">—</option><option value="b">b) the space where actors perform</option><option value="a">a) a person who reads the news</option><option value="g">g) perform in order to get a part</option><option value="h">h) practise for a performance</option></select>
+  </div>
+  <div class="s">6. newsreader →
+    <select id="d6"><option value="">—</option><option value="a">a) a person who reads the news</option><option value="d">d) very recent news</option><option value="f">f) dialogue written on a screen</option><option value="j">j) film which is not a success</option></select>
+  </div>
+  <div class="s">7. flop →
+    <select id="d7"><option value="">—</option><option value="j">j) film, series, etc. which is not a success</option><option value="c">c) which is not like anything else</option><option value="e">e) confusing, difficult to understand</option><option value="g">g) perform in order to get a part</option></select>
+  </div>
+  <div class="s">8. unique →
+    <select id="d8"><option value="">—</option><option value="c">c) which is not like anything else</option><option value="i">i) not obvious, concrete or realistic</option><option value="e">e) confusing</option><option value="j">j) not a success</option></select>
+  </div>
+  <div class="s">9. puzzling →
+    <select id="d9"><option value="">—</option><option value="e">e) confusing, difficult to understand</option><option value="i">i) not obvious, concrete or realistic</option><option value="c">c) not like anything else</option><option value="h">h) practise for a performance</option></select>
+  </div>
+  <div class="s">10. rehearsal →
+    <select id="d10"><option value="">—</option><option value="h">h) practise for a performance</option><option value="g">g) perform in order to get a part</option><option value="b">b) the space where actors perform</option><option value="a">a) a person who reads the news</option></select>
+  </div>
+  <div class="btn-r">
+    <button class="bc" onclick="chk('d',Ans.d,10,'f4','e4')">Перевірити</button>
+    <button class="br" onclick="rst('d',[1,2,3,4,5,6,7,8,9,10],'f4','e4')">Скинути</button>
+  </div>
+  <div class="fb" id="f4"></div>
+</div>
+
+<!-- EX 5 Choose correct words -->
+<div class="ex" id="ex5">
+  <h2><span class="n">5</span> Choose the correct words</h2>
+  <p class="inst">Оберіть правильний варіант. <strong>(5 балів)</strong></p>
+  <div class="s">1. You can choose what you want to watch with
+    <select id="e1"><option value="">—</option><option value="on-demand content">on-demand content</option><option value="seasons">seasons</option><option value="breaking news">breaking news</option></select>.
+  </div>
+  <div class="s">2. The band’s new video was an instant success and went
+    <select id="e2"><option value="">—</option><option value="viral">viral</option><option value="setback">setback</option><option value="to square one">to square one</option></select>
+    in a few hours.
+  </div>
+  <div class="s">3. The play wasn’t very easy to understand – it was really
+    <select id="e3"><option value="">—</option><option value="sophisticated">sophisticated</option><option value="realistic">realistic</option><option value="breathtaking">breathtaking</option></select>.
+  </div>
+  <div class="s">4. We loved the
+    <select id="e4"><option value="">—</option><option value="set design">set design</option><option value="lighting">lighting</option><option value="rehearsal">rehearsal</option></select>
+    – it looked like a fairy castle!
+  </div>
+  <div class="s">5. Her third film was very popular and since then she’s never
+    <select id="e5"><option value="">—</option><option value="looked back">looked back</option><option value="made a name for herself">made a name for herself</option><option value="looked forward">looked forward</option></select>.
+  </div>
+  <div class="btn-r">
+    <button class="bc" onclick="chk('e',Ans.e,5,'f5','e5')">Перевірити</button>
+    <button class="br" onclick="rst('e',[1,2,3,4,5],'f5','e5')">Скинути</button>
+  </div>
+  <div class="fb" id="f5"></div>
+</div>
+
+<!-- TOTAL -->
+<div class="tot">
+  <h2>📝 Підсумок</h2>
+  <p class="h">Спочатку перевірте кожну вправу, потім натисніть кнопку.</p>
+  <button class="bt" onclick="total()">Порахувати загальний бал</button>
+  <div class="td" id="td"></div>
+</div>
+
+<footer>Culture · Урок 2<br>Максимум: <strong>34 бали</strong></footer>
+</div>
+
+<script>
+const Ans = {
+  a:{1:'C',2:'D',3:'B',4:'C',5:'C'},
+  b:{1:'viewers',2:'screen time',3:'binge-watching',4:'streaming service',5:'spoilers',6:'on-demand content',7:'series'},
+  c:{1:'spoilers',2:'season',3:'subtitles',4:'credits',5:'little-known',6:'binge-watching',7:'eagerly-awaited'},
+  d:{1:'d',2:'f',3:'i',4:'g',5:'b',6:'a',7:'j',8:'c',9:'e',10:'h'},
+  e:{1:'on-demand content',2:'viral',3:'sophisticated',4:'set design',5:'looked back'}
+};
+const S = {e1:null,e2:null,e3:null,e4:null,e5:null};
+
+function chk(pre,ans,tot,fid,key){
+  let c=0;
+  for(const[k,v] of Object.entries(ans)){
+    const el=document.getElementById(pre+k);
+    if(!el) continue;
+    el.classList.remove('ok','bad');
+    if(el.value===v){el.classList.add('ok');c++;}
+    else if(el.value) el.classList.add('bad');
+  }
+  S[key]={c,t:tot};
+  const fb=document.getElementById(fid);
+  fb.classList.add('show');
+  if(c===tot){fb.className='fb show ok';fb.innerHTML='✅ Чудово! '+c+' / '+tot;}
+  else{fb.className='fb show bad';fb.innerHTML='Результат: <span class="sc">'+c+' / '+tot+'</span>. Перевірте червоні поля.';}
+}
+function rst(pre,keys,fid,key){
+  keys.forEach(k=>{const el=document.getElementById(pre+k);if(el){el.value='';el.classList.remove('ok','bad');}});
+  document.getElementById(fid).className='fb';S[key]=null;
+  document.getElementById('td').className='td';document.getElementById('td').innerHTML='';
+}
+function total(){
+  if(!S.e1) chk('a',Ans.a,5,'f1','e1');
+  if(!S.e2) chk('b',Ans.b,7,'f2','e2');
+  if(!S.e3) chk('c',Ans.c,7,'f3','e3');
+  if(!S.e4) chk('d',Ans.d,10,'f4','e4');
+  if(!S.e5) chk('e',Ans.e,5,'f5','e5');
+  const s1=S.e1.c,s2=S.e2.c,s3=S.e3.c,s4=S.e4.c,s5=S.e5.c;
+  const tot=s1+s2+s3+s4+s5, max=34, pct=Math.round(tot/max*100);
+  const box=document.getElementById('td');
+  let cls,msg;
+  if(pct>=80){cls='good';msg='Відмінно! 🎉';}
+  else if(pct>=50){cls='mid';msg='Добре, повторіть media vocabulary.';}
+  else{cls='bad';msg='Потрібно ще потренувати.';}
+  box.className='td show '+cls;
+  box.innerHTML='<div>'+msg+'</div><div class="big">'+tot+' / '+max+'</div><div>'+pct+'%</div><div class="bd"><div><span>1. Ephemeral Art reading</span><span>'+s1+' / 5</span></div><div><span>2. Streaming vocab set 1</span><span>'+s2+' / 7</span></div><div><span>3. Streaming vocab set 2</span><span>'+s3+' / 7</span></div><div><span>4. Match definitions</span><span>'+s4+' / 10</span></div><div><span>5. Choose the correct words</span><span>'+s5+' / 5</span></div></div>';
+}
+</script>
+</body>
+</html>
